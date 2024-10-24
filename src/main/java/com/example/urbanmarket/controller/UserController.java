@@ -1,8 +1,8 @@
 package com.example.urbanmarket.controller;
 
-import com.example.urbanmarket.dto.request.UserRequest;
-import com.example.urbanmarket.dto.response.UserResponse;
-import com.example.urbanmarket.service.UserService;
+import com.example.urbanmarket.dto.request.UserRequestDto;
+import com.example.urbanmarket.dto.response.UserResponseDto;
+import com.example.urbanmarket.entity.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,33 +11,33 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest request) {
-        UserResponse createdUser = userService.createUser(request);
+    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserRequestDto request) {
+        UserResponseDto createdUser = userService.createUser(request);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable String id) {
-        UserResponse user = userService.getUserById(id);
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable String id) {
+        UserResponseDto user = userService.getUserById(id);
         return ResponseEntity.ok(user);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
-        List<UserResponse> users = userService.getAllUsers();
+    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
+        List<UserResponseDto> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable String id, @RequestBody UserRequest request) {
-        UserResponse updatedUser = userService.updateUser(id, request);
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable String id, @RequestBody UserRequestDto request) {
+        UserResponseDto updatedUser = userService.updateUser(id, request);
         return ResponseEntity.ok(updatedUser);
     }
 

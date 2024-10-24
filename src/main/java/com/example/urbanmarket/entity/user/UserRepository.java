@@ -1,10 +1,9 @@
-package com.example.urbanmarket.repository;
+package com.example.urbanmarket.entity.user;
 
-import com.example.urbanmarket.entity.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends MongoRepository<User, String> {
+public interface UserRepository extends MongoRepository<UserEntity, String> {
     boolean existsByEmail(String email);
 }

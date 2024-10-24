@@ -1,6 +1,6 @@
 package com.example.urbanmarket.dto.request;
 
-public record UserRequest(
+public record UserRequestDto(
         String firstName,
         String lastName,
         String email,

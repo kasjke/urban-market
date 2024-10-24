@@ -1,7 +1,9 @@
 package com.example.urbanmarket.dto.response;
 
 
-public record UserResponse(
+
+
+public record UserResponseDto(
         String id,
         String firstName,
         String lastName,

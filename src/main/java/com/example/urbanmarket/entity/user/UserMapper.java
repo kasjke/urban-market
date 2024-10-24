@@ -1,8 +1,7 @@
-package com.example.urbanmarket.mapper;
+package com.example.urbanmarket.entity.user;
 
-import com.example.urbanmarket.dto.request.UserRequest;
-import com.example.urbanmarket.dto.response.UserResponse;
-import com.example.urbanmarket.entity.User;
+import com.example.urbanmarket.dto.request.UserRequestDto;
+import com.example.urbanmarket.dto.response.UserResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -13,10 +12,10 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
-    User toEntity(UserRequest request);
+    UserEntity toEntity(UserRequestDto request);
 
-    UserResponse toResponse(User user);
+    UserResponseDto toResponse(UserEntity userEntity);
 
     @Mapping(target = "id", ignore = true)
-    void updateUserFromDto(UserRequest request, @MappingTarget User user);
+    void updateUserFromDto(UserRequestDto request, @MappingTarget UserEntity userEntity);
 }
