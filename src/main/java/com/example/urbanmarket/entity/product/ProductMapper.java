@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,15 +15,38 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ProductMapper {
     public ProductResponseDto toResponseDto(ProductEntity entity){
-        return null;
+        return new ProductResponseDto(entity.getId(),
+                entity.getName(),
+                entity.getDescription(),
+                entity.getCurrentPrice(),
+                entity.getOldPrice(),
+                entity.getAmount(),
+                entity.getImages(),
+                entity.getPurchaseCount(),
+                entity.getShopId());
     }
 
     public ProductEntity toEntity(ProductResponseDto dto){
-        return null;
+        return new ProductEntity(dto.id(),
+                dto.name(),
+                dto.description(),
+                dto.currentPrice(),
+                dto.oldPrice(),
+                dto.amount(),
+                dto.images(),
+                dto.purchaseCount(),
+                dto.shopId(),
+                new Date());
     }
 
     public ProductEntity toEntity(ProductRequestDto dto){
-        return null;
+        return new ProductEntity(dto.name(),
+                dto.description(),
+                dto.currentPrice(),
+                dto.oldPrice(),
+                dto.amount(),
+                dto.images(),
+                dto.shopId());
     }
 
 
