@@ -18,6 +18,7 @@ public class ProductMapper {
         return new ProductResponseDto(entity.getId(),
                 entity.getName(),
                 entity.getDescription(),
+                entity.getSubCategory(),
                 entity.getCurrentPrice(),
                 entity.getOldPrice(),
                 entity.getAmount(),
@@ -30,6 +31,8 @@ public class ProductMapper {
         return new ProductEntity(dto.id(),
                 dto.name(),
                 dto.description(),
+                dto.subCategory(),
+                dto.subCategory().getCategory(),
                 dto.currentPrice(),
                 dto.oldPrice(),
                 dto.amount(),
@@ -42,8 +45,8 @@ public class ProductMapper {
     public ProductEntity toEntity(ProductRequestDto dto){
         return new ProductEntity(dto.name(),
                 dto.description(),
+                dto.subCategory(),
                 dto.currentPrice(),
-                dto.oldPrice(),
                 dto.amount(),
                 dto.images(),
                 dto.shopId());

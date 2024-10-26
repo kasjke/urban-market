@@ -1,5 +1,7 @@
 package com.example.urbanmarket.entity.product;
 
+import com.example.urbanmarket.entity.product.sections.Category;
+import com.example.urbanmarket.entity.product.sections.SubCategory;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -31,17 +33,11 @@ public class ProductEntity {
     @NotNull
     private String description;
 
-//    @DBRef
-//    private CategoryEntity category;
-//
-//    @DBRef
-//    private SubCategoryEntity subCategory;
+    @NotNull
+    private SubCategory subCategory;
 
-//    @Column
-//    private Labels label;
-//
-//    @Column
-//    private Types type;
+    @NotNull
+    private Category category;
 
     @NotNull
     private int currentPrice;
@@ -63,11 +59,13 @@ public class ProductEntity {
     @CreatedDate
     private Date createdAt;
 
-    public ProductEntity(String name, String description, int currentPrice, int oldPrice, int amount, List<String> images, String shopId) {
+    public ProductEntity(String name, String description, SubCategory subCategory, int currentPrice, int amount, List<String> images, String shopId) {
         this.name = name;
         this.description = description;
+        this.subCategory = subCategory;
+        this.category = subCategory.getCategory();
+        this.oldPrice = this.currentPrice;
         this.currentPrice = currentPrice;
-        this.oldPrice = oldPrice;
         this.amount = amount;
         this.images = images;
         this.shopId = shopId;
