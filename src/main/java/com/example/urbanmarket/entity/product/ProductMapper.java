@@ -1,6 +1,6 @@
 package com.example.urbanmarket.entity.product;
 
-import com.example.urbanmarket.dto.request.ProductRequestDto;
+import com.example.urbanmarket.dto.request.product.ProductRequestDto;
 import com.example.urbanmarket.dto.response.ProductResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

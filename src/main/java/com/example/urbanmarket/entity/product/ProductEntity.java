@@ -64,8 +64,8 @@ public class ProductEntity {
         this.description = description;
         this.subCategory = subCategory;
         this.category = subCategory.getCategory();
-        this.oldPrice = this.currentPrice;
         this.currentPrice = currentPrice;
+        this.oldPrice = this.currentPrice;
         this.amount = amount;
         this.images = images;
         this.shopId = shopId;

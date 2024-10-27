@@ -1,6 +1,8 @@
 package com.example.urbanmarket.entity.product;
 
-import com.example.urbanmarket.dto.request.ProductRequestDto;
+import com.example.urbanmarket.dto.request.product.ProductInCartRequestDto;
+import com.example.urbanmarket.dto.request.product.ProductRequestDto;
+import com.example.urbanmarket.dto.response.ProductInCartOrderResponseDto;
 import com.example.urbanmarket.dto.response.ProductResponseDto;
 
 import com.example.urbanmarket.exception.LogEnum;
@@ -62,7 +64,27 @@ public class ProductServiceImpl implements ProductService{
         log.info("{}: " + OBJECT_NAME + " (id: {}) was deleted", LogEnum.SERVICE, id);
     }
 
+    public boolean existById(String id){
+        return repository.existsById(id);
+    }
+
     private ProductEntity findById(String id){
         return repository.findById(id).orElseThrow(RuntimeException::new);
+    }
+
+    public List<ProductInCartOrderResponseDto> getCartOrderResponseFigures(List<ProductInCartRequestDto> products) {
+        return products
+                .stream()
+                .map(productDto -> {
+                    ProductEntity product = findById(productDto.id());
+                    return new ProductInCartOrderResponseDto(
+                            product.getId(),
+                            product.getName(),
+                            product.getImages().get(0),
+                            productDto.amount(),
+                            product.getCurrentPrice()
+                    );
+                })
+                .toList();
     }
 }
