@@ -1,11 +1,11 @@
-package com.example.urbanmarket.enums;
+package com.example.urbanmarket.entity.product.sections;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum MainCategory {
+public enum Category {
     ANIME("Anime"),
     MANGA_BOOKS("MangaBooks"),
     CLOTHING("Clothing"),

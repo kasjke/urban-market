@@ -1,7 +1,10 @@
 package com.example.urbanmarket.entity.product;
 
+import com.example.urbanmarket.entity.product.sections.Category;
+import com.example.urbanmarket.entity.product.sections.SubCategory;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -14,31 +17,24 @@ import java.util.List;
 @Document(collection = "products")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class ProductEntity {
 
     @Id
     private String id;
 
-    @Size(max = 50)
+    @Size (max = 50)
     @NotNull
     private String name;
 
     @Size(min = 10, max = 200)
     @NotNull
     private String description;
+    @NotNull
+    private SubCategory subCategory;
 
-//    @DBRef
-//    private CategoryEntity category;
-//
-//    @DBRef
-//    private SubCategoryEntity subCategory;
-
-    //    @Column
-//    private Labels label;
-//
-//    @Column
-//    private Types type;
-
+    @NotNull
+    private Category category;
 
     @NotNull
     private int currentPrice;
@@ -56,7 +52,17 @@ public class ProductEntity {
     @NotNull
     private String shopId;
 
-    @NotNull
     @CreatedDate
     private Date createdAt;
+
+    public ProductEntity(String name, String description, SubCategory subCategory, int currentPrice, int amount, List<String> images, String shopId) {
+        this.name = name;
+        this.description = description;
+        this.category = subCategory.getCategory();
+        this.currentPrice = currentPrice;
+        this.oldPrice = this.currentPrice;
+        this.amount = amount;
+        this.images = images;
+        this.shopId = shopId;
+    }
 }

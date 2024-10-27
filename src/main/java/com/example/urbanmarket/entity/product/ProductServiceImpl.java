@@ -8,15 +8,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService{
     private static final String OBJECT_NAME = "Product";
-
     private final ProductRepository repository;
-
     private final ProductMapper mapper;
 
     @Override
@@ -38,10 +37,12 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public List<ProductResponseDto> getAll() {
-        List<ProductEntity> entities = repository.findAll();
+        List<ProductResponseDto> entities = repository.findAll()
+                .stream().map(mapper::toResponseDto)
+                .collect(Collectors.toList());
 
         log.info("{}: all " + OBJECT_NAME + "were obtained", LogEnum.SERVICE);
-        return mapper.toResponseDtoList(entities);
+        return entities;
     }
 
     @Override

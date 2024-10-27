@@ -1,41 +1,27 @@
 package com.example.urbanmarket.entity.product;
 
+import com.example.urbanmarket.config.CustomMapperConfig;
 import com.example.urbanmarket.dto.request.ProductRequestDto;
 import com.example.urbanmarket.dto.response.ProductResponseDto;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import com.example.urbanmarket.entity.product.sections.SubCategory;
+import org.mapstruct.Mapper;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Slf4j
-@Component
-@AllArgsConstructor
-public class ProductMapper {
-    public ProductResponseDto toResponseDto(ProductEntity entity){
-        return null;
-    }
+@Mapper(componentModel = "spring", config = CustomMapperConfig.class)
+public interface ProductMapper {
+     ProductResponseDto toResponseDto(ProductEntity entity);
 
-    public ProductEntity toEntity(ProductResponseDto dto){
-        return null;
-    }
-
-    public ProductEntity toEntity(ProductRequestDto dto){
-        return null;
-    }
+     ProductEntity toEntity(ProductResponseDto dto);
 
 
-    public List<ProductResponseDto> toResponseDtoList(List<ProductEntity> entities){
-        return entities == null ? null : entities
-                .stream()
-                .map(this::toResponseDto)
-                .toList();
-    }
+     ProductEntity toEntity(ProductRequestDto dto);
 
-    public List<ProductEntity> toEntityList(List<ProductResponseDto> dtos){
-        return dtos == null ? null : dtos.stream()
-                .map(this::toEntity)
-                .collect(Collectors.toList());
+    List<ProductResponseDto> toListEntity (List<ProductEntity> productEntities);
+    default SubCategory map(String subCategory) {
+        if (subCategory == null) {
+            return null;
+        }
+        return SubCategory.valueOf(subCategory);
     }
 }

@@ -1,13 +1,14 @@
 package com.example.urbanmarket.entity.order;
 
 
+import com.example.urbanmarket.config.CustomMapperConfig;
 import com.example.urbanmarket.dto.request.OrderRequestDto;
 import com.example.urbanmarket.dto.response.OrderResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper
+@Mapper(componentModel = "spring", config = CustomMapperConfig.class)
 public interface OrderMapper {
 
 

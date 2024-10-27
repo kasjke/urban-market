@@ -1,6 +1,5 @@
 package com.example.urbanmarket.exception;
 
-import com.example.urbanmarket.exception.userExceptions.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
@@ -36,12 +35,16 @@ public class GlobalExceptionHandler {
         log.error("An error occurred: {}", ex.getMessage(), ex);
         return getErrorsMap(ex, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<Map<String, List<String>>> handleUserNotFound(UserNotFoundException ex) {
-        return getErrorsMap(ex, HttpStatus.NOT_FOUND);
+
+    @ExceptionHandler(CustomNotFoundException.class)
+    public ResponseEntity<Map<String, List<String>>> notFoundException(CustomNotFoundException e) {
+        return getErrorsMap(e, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(CustomAlreadyExistException.class)
+    public ResponseEntity<Map<String, List<String>>> alreadyExistException(CustomAlreadyExistException e) {
+        return getErrorsMap(e, HttpStatus.CONFLICT);
+    }
 
 
     private Map<String, List<String>> getErrorsMap(Map<String, List<String>> errors) {
