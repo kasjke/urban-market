@@ -2,67 +2,25 @@ package com.example.urbanmarket.entity.product;
 
 import com.example.urbanmarket.dto.request.product.ProductRequestDto;
 import com.example.urbanmarket.dto.response.ProductResponseDto;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import com.example.urbanmarket.entity.product.sections.SubCategory;
+import org.mapstruct.Mapper;
 
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Slf4j
-@Component
-@AllArgsConstructor
-public class ProductMapper {
-    public ProductResponseDto toResponseDto(ProductEntity entity){
-        return new ProductResponseDto(entity.getId(),
-                entity.getName(),
-                entity.getDescription(),
-                entity.getSubCategory(),
-                entity.getCurrentPrice(),
-                entity.getOldPrice(),
-                entity.getAmount(),
-                entity.getImages(),
-                entity.getPurchaseCount(),
-                entity.getShopId());
-    }
+@Mapper
+public interface ProductMapper {
+    ProductResponseDto toResponseDto(ProductEntity entity);
 
-    public ProductEntity toEntity(ProductResponseDto dto){
-        return new ProductEntity(dto.id(),
-                dto.name(),
-                dto.description(),
-                dto.subCategory(),
-                dto.subCategory().getCategory(),
-                dto.currentPrice(),
-                dto.oldPrice(),
-                dto.amount(),
-                dto.images(),
-                dto.purchaseCount(),
-                dto.shopId(),
-                new Date());
-    }
+    ProductEntity toEntity(ProductResponseDto dto);
+    ProductEntity toEntity(ProductRequestDto dto);
 
-    public ProductEntity toEntity(ProductRequestDto dto){
-        return new ProductEntity(dto.name(),
-                dto.description(),
-                dto.subCategory(),
-                dto.currentPrice(),
-                dto.amount(),
-                dto.images(),
-                dto.shopId());
-    }
+    List<ProductResponseDto> toResponseDtoList (List<ProductEntity> entities);
+    List<ProductEntity> toEntityList(List<ProductResponseDto> dtos);
 
-
-    public List<ProductResponseDto> toResponseDtoList(List<ProductEntity> entities){
-        return entities == null ? null : entities
-                .stream()
-                .map(this::toResponseDto)
-                .toList();
-    }
-
-    public List<ProductEntity> toEntityList(List<ProductResponseDto> dtos){
-        return dtos == null ? null : dtos.stream()
-                .map(this::toEntity)
-                .collect(Collectors.toList());
+    default SubCategory map(String subCategory) {
+        if (subCategory == null) {
+            return null;
+        }
+        return SubCategory.valueOf(subCategory);
     }
 }

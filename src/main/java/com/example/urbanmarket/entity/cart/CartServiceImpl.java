@@ -30,7 +30,7 @@ public class CartServiceImpl implements CartService{
     public List<CartResponseDto> getAll() {
         List<CartEntity> cartList = cartRepository.findAll();
         log.info("{}: All " + OBJECT_NAME + "s retrieved from db", LogEnum.SERVICE);
-        return cartMapper.toDtoList(cartList);
+        return cartMapper.toResponseDtoList(cartList);
     }
 
     @Override

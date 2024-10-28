@@ -3,7 +3,6 @@ package com.example.urbanmarket.controller;
 import com.example.urbanmarket.dto.request.product.ProductRequestDto;
 import com.example.urbanmarket.dto.response.ProductResponseDto;
 import com.example.urbanmarket.entity.product.ProductService;
-import com.example.urbanmarket.entity.product.sections.SubCategory;
 import com.example.urbanmarket.exception.LogEnum;
 
 import io.swagger.v3.oas.annotations.Operation;

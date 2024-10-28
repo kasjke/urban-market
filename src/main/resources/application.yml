@@ -4,7 +4,6 @@ server:
 spring:
   data:
     mongodb:
-      host: localhost
-      port: 27017
-      database: urban-market
+      uri: mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@urbanmarket.hbvir.mongodb.net/?retryWrites=true&w=majority&appName=UrbanMarket
+      database: UrbanMarket
 
