@@ -4,9 +4,11 @@ import com.example.urbanmarket.entity.product.sections.Category;
 import com.example.urbanmarket.entity.product.sections.SubCategory;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -23,13 +25,14 @@ public class ProductEntity {
     @Id
     private String id;
 
-    @Size (max = 50)
+    @Size(max = 50)
     @NotNull
     private String name;
 
     @Size(min = 10, max = 200)
     @NotNull
     private String description;
+
     @NotNull
     private SubCategory subCategory;
 
@@ -51,13 +54,14 @@ public class ProductEntity {
 
     @NotNull
     private String shopId;
-
+ 
     @CreatedDate
     private Date createdAt;
 
     public ProductEntity(String name, String description, SubCategory subCategory, int currentPrice, int amount, List<String> images, String shopId) {
         this.name = name;
         this.description = description;
+        this.subCategory = subCategory;
         this.category = subCategory.getCategory();
         this.currentPrice = currentPrice;
         this.oldPrice = this.currentPrice;

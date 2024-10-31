@@ -1,23 +1,29 @@
 package com.example.urbanmarket.entity.product;
 
+
 import com.example.urbanmarket.config.CustomMapperConfig;
-import com.example.urbanmarket.dto.request.ProductRequestDto;
-import com.example.urbanmarket.dto.response.ProductResponseDto;
+import com.example.urbanmarket.dto.request.product.ProductRequestDto;
+import com.example.urbanmarket.dto.response.product.ProductResponseDto;
 import com.example.urbanmarket.entity.product.sections.SubCategory;
 import org.mapstruct.Mapper;
 
 import java.util.List;
 
+
+
+
 @Mapper(componentModel = "spring", config = CustomMapperConfig.class)
 public interface ProductMapper {
-     ProductResponseDto toResponseDto(ProductEntity entity);
+    ProductResponseDto toResponseDto(ProductEntity entity);
 
-     ProductEntity toEntity(ProductResponseDto dto);
+    ProductEntity toEntity(ProductResponseDto dto);
 
+    ProductEntity toEntity(ProductRequestDto dto);
 
-     ProductEntity toEntity(ProductRequestDto dto);
+    List<ProductResponseDto> toResponseDtoList(List<ProductEntity> entities);
 
-    List<ProductResponseDto> toListEntity (List<ProductEntity> productEntities);
+    List<ProductEntity> toEntityList(List<ProductResponseDto> dtos);
+
     default SubCategory map(String subCategory) {
         if (subCategory == null) {
             return null;

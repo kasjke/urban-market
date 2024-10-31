@@ -1,11 +1,14 @@
 package com.example.urbanmarket.entity.product.sections;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 import java.util.List;
 
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 @Getter
 @RequiredArgsConstructor
 public enum SubCategory {
@@ -47,5 +50,15 @@ public enum SubCategory {
         return Arrays.stream(values())
                 .filter(sub -> sub.getCategory() == category)
                 .toList();
+    }
+
+    @JsonCreator
+    public static SubCategory fromString(String value) {
+        for (SubCategory subCategory : SubCategory.values()) {
+            if (subCategory.name().equalsIgnoreCase(value) || subCategory.displayName.equalsIgnoreCase(value)) {
+                return subCategory;
+            }
+        }
+        throw new IllegalArgumentException("Unknown subcategory: " + value);
     }
 }
