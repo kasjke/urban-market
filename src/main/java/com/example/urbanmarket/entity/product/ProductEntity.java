@@ -25,7 +25,7 @@ public class ProductEntity {
     @Id
     private String id;
 
-    @Size (max = 50)
+    @Size(max = 50)
     @NotNull
     private String name;
 
@@ -54,8 +54,7 @@ public class ProductEntity {
 
     @NotNull
     private String shopId;
-
-    @NotNull
+ 
     @CreatedDate
     private Date createdAt;
 

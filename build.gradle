@@ -23,16 +23,21 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    mapstructVersion = "1.5.5.Final"
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
-
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    implementation 'org.mapstruct:mapstruct:1.6.2'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.2'
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+
+
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

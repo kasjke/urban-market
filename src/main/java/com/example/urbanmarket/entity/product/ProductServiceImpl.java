@@ -5,7 +5,7 @@ import com.example.urbanmarket.dto.request.product.ProductRequestDto;
 import com.example.urbanmarket.dto.response.product.ProductInCartOrderResponseDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseDto;
 
-import com.example.urbanmarket.entity.shop.ShopServiceImpl;
+import com.example.urbanmarket.entity.shop.ShopService;
 import com.example.urbanmarket.exception.LogEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService{
     private static final String OBJECT_NAME = "Product";
 
-    private final ShopServiceImpl shopService;
+    private final ShopService shopService;
 
     private final ProductRepository repository;
 
