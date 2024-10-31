@@ -1,4 +1,4 @@
-package com.example.urbanmarket.dto.response;
+package com.example.urbanmarket.dto.response.product;
 
 import com.example.urbanmarket.entity.product.sections.SubCategory;
 

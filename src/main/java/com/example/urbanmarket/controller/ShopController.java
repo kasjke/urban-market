@@ -1,8 +1,8 @@
 package com.example.urbanmarket.controller;
 
-import com.example.urbanmarket.dto.request.product.ProductRequestDto;
-import com.example.urbanmarket.dto.response.product.ProductResponseDto;
-import com.example.urbanmarket.entity.product.ProductService;
+import com.example.urbanmarket.dto.request.ShopRequestDto;
+import com.example.urbanmarket.dto.response.ShopResponseDto;
+import com.example.urbanmarket.entity.shop.ShopService;
 import com.example.urbanmarket.exception.LogEnum;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,48 +22,48 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j
 @RestController
+@RequestMapping("/api/v1/shops")
+@Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/products")
-public class ProductController {
+public class ShopController {
     private static final String URI_WITH_ID = "/{id}";
     //private static final String SEC_REC = "BearerAuth";
-    private static final String OBJECT_NAME = "Product";
+    private static final String OBJECT_NAME = "Shop";
 
-    private final ProductService service;
+    private final ShopService service;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     //@SecurityRequirement(name = SEC_REC)
-    @Operation(summary = "Add new Product")
+    @Operation(summary = "Add new Shop")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Added new Product",
+            @ApiResponse(responseCode = "201", description = "Added new Shop",
                     content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ProductResponseDto.class))}),
+                            schema = @Schema(implementation = ShopResponseDto.class))}),
             @ApiResponse(responseCode = "400", description = "Validation errors",
                     content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = RuntimeException.class))})
     })
-    public ProductResponseDto create(@Valid @RequestBody ProductRequestDto request) {
+    public ShopResponseDto create(@Valid @RequestBody ShopRequestDto request) {
         //accessValidator.isAdmin();
 
-        ProductResponseDto product = service.create(request);
+        ShopResponseDto shop = service.create(request);
 
-        log.info("{}: {} (id: {}) has been added", LogEnum.SERVICE, OBJECT_NAME, product.id());
-        return product;
+        log.info("{}: {} (id: {}) has been added", LogEnum.SERVICE, OBJECT_NAME, shop.id());
+        return shop;
     }
 
     @GetMapping
-    @Operation(summary = "Get all products")
+    @Operation(summary = "Get all shops")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "List of products",
+            @ApiResponse(responseCode = "200", description = "List of shops",
                     content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            array = @ArraySchema(schema = @Schema(implementation = ProductResponseDto.class)))}
+                            array = @ArraySchema(schema = @Schema(implementation = ShopResponseDto.class)))}
             )
     })
-    public List<ProductResponseDto> getAll() {
-        List<ProductResponseDto> all = service.getAll();
+    public List<ShopResponseDto> getAll() {
+        List<ShopResponseDto> all = service.getAll();
 
         log.info("{}: {}s have been retrieved", LogEnum.CONTROLLER, OBJECT_NAME);
         return all;
@@ -71,45 +71,45 @@ public class ProductController {
 
     @GetMapping(URI_WITH_ID)
     //@SecurityRequirement(name = SEC_REC)
-    @Operation(summary = "Get product by ID")
+    @Operation(summary = "Get shop by ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Product received",
+            @ApiResponse(responseCode = "200", description = "Shop received",
                     content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ProductResponseDto.class)) }),
-            @ApiResponse(responseCode = "404", description = "Product not found",
+                            schema = @Schema(implementation = ShopResponseDto.class)) }),
+            @ApiResponse(responseCode = "404", description = "Shop not found",
                     content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = RuntimeException.class)) })
 
     })
-    public ProductResponseDto getById(@PathVariable String id) {
-        ProductResponseDto product = service.getById(id);
-        log.info("{}: {} (id: {}) has been retrieved", LogEnum.SERVICE, OBJECT_NAME, product.id());
-        return product;
+    public ShopResponseDto getById(@PathVariable String id) {
+        ShopResponseDto shop = service.getById(id);
+        log.info("{}: {} (id: {}) has been retrieved", LogEnum.SERVICE, OBJECT_NAME, shop.id());
+        return shop;
     }
 
     @PutMapping(URI_WITH_ID)
     //@SecurityRequirement(name = SEC_REC)
-    @Operation(summary = "Update product")
+    @Operation(summary = "Update shop")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Product updated"),
-            @ApiResponse(responseCode = "404", description = "Product not found",
+            @ApiResponse(responseCode = "200", description = "Shop updated"),
+            @ApiResponse(responseCode = "404", description = "Shop not found",
                     content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = RuntimeException.class))})
     })
-    public ProductResponseDto update(@PathVariable String id, @Valid @RequestBody ProductRequestDto requestDto) {
+    public ShopResponseDto update(@PathVariable String id, @Valid @RequestBody ShopRequestDto requestDto) {
         //accessValidator.isAdmin();
 
-        ProductResponseDto product = service.update(id, requestDto);
+        ShopResponseDto shop = service.update(id, requestDto);
         log.info("{}: {} (id: {}) has been updated", LogEnum.CONTROLLER, OBJECT_NAME, id);
-        return product;
+        return shop;
     }
 
     @DeleteMapping(URI_WITH_ID)
     //@SecurityRequirement(name = SEC_REC)
-    @Operation(summary = "Delete product")
+    @Operation(summary = "Delete shop")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Product deleted"),
-            @ApiResponse(responseCode = "404", description = "Product not found",
+            @ApiResponse(responseCode = "200", description = "Shop deleted"),
+            @ApiResponse(responseCode = "404", description = "Shop not found",
                     content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = RuntimeException.class)) }) })
     public void delete(@PathVariable String id){

@@ -2,21 +2,25 @@ package com.example.urbanmarket.entity.product;
 
 import com.example.urbanmarket.dto.request.product.ProductInCartRequestDto;
 import com.example.urbanmarket.dto.request.product.ProductRequestDto;
-import com.example.urbanmarket.dto.response.ProductInCartOrderResponseDto;
-import com.example.urbanmarket.dto.response.ProductResponseDto;
+import com.example.urbanmarket.dto.response.product.ProductInCartOrderResponseDto;
+import com.example.urbanmarket.dto.response.product.ProductResponseDto;
 
+import com.example.urbanmarket.entity.shop.ShopServiceImpl;
 import com.example.urbanmarket.exception.LogEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService{
     private static final String OBJECT_NAME = "Product";
+
+    private final ShopServiceImpl shopService;
 
     private final ProductRepository repository;
 
@@ -26,6 +30,7 @@ public class ProductServiceImpl implements ProductService{
     public ProductResponseDto create(ProductRequestDto productDto) {
         ProductEntity entity = mapper.toEntity(productDto);
         entity = repository.save(entity);
+        shopService.addProductToShop(entity);
 
         log.info("{}: " + OBJECT_NAME + " (Id: {}) was created", LogEnum.SERVICE, entity.getId());
         return mapper.toResponseDto(entity);
@@ -54,13 +59,16 @@ public class ProductServiceImpl implements ProductService{
         entity.setId(fromDb.getId());
 
         repository.save(entity);
+        shopService.addProductToShop(entity);
         log.info("{}: " + OBJECT_NAME + " (id: {}) was updated", LogEnum.SERVICE, id);
         return mapper.toResponseDto(entity);
     }
 
     @Override
     public void delete(String id) {
+        shopService.removeProductFromShop(findById(id));
         repository.deleteById(id);
+
         log.info("{}: " + OBJECT_NAME + " (id: {}) was deleted", LogEnum.SERVICE, id);
     }
 
@@ -68,8 +76,12 @@ public class ProductServiceImpl implements ProductService{
         return repository.existsById(id);
     }
 
-    private ProductEntity findById(String id){
+    public ProductEntity findById(String id){
         return repository.findById(id).orElseThrow(RuntimeException::new);
+    }
+
+    public List<ProductEntity> findByIds(List<String> ids){
+        return ids.stream().map(this::findById).collect(Collectors.toList());
     }
 
     public List<ProductInCartOrderResponseDto> getCartOrderResponseFigures(List<ProductInCartRequestDto> products) {

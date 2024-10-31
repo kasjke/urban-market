@@ -2,7 +2,7 @@ package com.example.urbanmarket.entity.cart;
 
 import com.example.urbanmarket.dto.request.CartRequestDto;
 import com.example.urbanmarket.dto.response.CartResponseDto;
-import com.example.urbanmarket.dto.response.ProductInCartOrderResponseDto;
+import com.example.urbanmarket.dto.response.product.ProductInCartOrderResponseDto;
 import com.example.urbanmarket.entity.user.UserEntity;
 import com.example.urbanmarket.entity.product.ProductServiceImpl;
 import com.example.urbanmarket.exception.LogEnum;
@@ -13,15 +13,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class CartServiceImpl implements CartService{
     private final CartRepository cartRepository;
 
     private final CartMapper cartMapper;
     private final ProductServiceImpl productService;
-    //private final UserServiceImpl userService;
+//    private final UserServiceImpl userService;
 //    private final PromoCodeServiceImpl promoCodeService;
 
     private static final String OBJECT_NAME = "Cart";
@@ -52,7 +52,7 @@ public class CartServiceImpl implements CartService{
 
 
         //VALIDATION CHECK | NOT REAL IDS
-        List<ProductInCartOrderResponseDto> products = productService.getCartOrderResponseFigures(cartDto.figures());
+        List<ProductInCartOrderResponseDto> products = productService.getCartOrderResponseFigures(cartDto.products());
         //products.removeIf(elem -> !figureService.existById(elem.figureId())); - This variant isn't working (IDK why...)
         for (ProductInCartOrderResponseDto elem : products){
             if (!productService.existById(elem.figureId())){
@@ -72,7 +72,6 @@ public class CartServiceImpl implements CartService{
         }
          */
 
-
         CartEntity newCart = new CartEntity(currentUser, products, getDiscount(cartDto.promoCode()));
         CartEntity savedCart = cartRepository.save(newCart);
 
@@ -83,7 +82,7 @@ public class CartServiceImpl implements CartService{
     @Override
     public CartResponseDto update(String id, CartRequestDto cartDto) {
         CartEntity cart = findById(id);
-        List<ProductInCartOrderResponseDto> products = productService.getCartOrderResponseFigures(cartDto.figures());
+        List<ProductInCartOrderResponseDto> products = productService.getCartOrderResponseFigures(cartDto.products());
 
         if (products.isEmpty()) {
             throw new RuntimeException("This request is not valid");
