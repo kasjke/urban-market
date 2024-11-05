@@ -3,7 +3,7 @@ package com.example.urbanmarket.entity.shop;
 import com.example.urbanmarket.dto.request.ShopRequestDto;
 import com.example.urbanmarket.dto.response.ShopResponseDto;
 import com.example.urbanmarket.entity.product.ProductMapper;
-import com.example.urbanmarket.entity.product.ProductServiceImpl;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

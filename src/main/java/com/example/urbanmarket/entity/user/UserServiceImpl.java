@@ -5,6 +5,7 @@ import com.example.urbanmarket.dto.response.UserResponseDto;
 import com.example.urbanmarket.exception.CustomAlreadyExistException;
 import com.example.urbanmarket.exception.CustomNotFoundException;
 import com.example.urbanmarket.exception.LogEnum;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class UserServiceImpl implements UserService {
 
     private static final String OBJECT_NAME = "User";
 
-    public UserResponseDto createUser(UserRequestDto request) {
+    public UserResponseDto create(UserRequestDto request) {
         if (userRepository.existsByEmail(request.email())) {
             throw new CustomAlreadyExistException(OBJECT_NAME, "email", request.email());
         }
@@ -33,7 +34,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toResponse(savedUserEntity);
     }
 
-    public UserResponseDto getUserById(String id) {
+    public UserResponseDto getById(String id) {
         UserEntity userEntity = userRepository.findById(id)
                 .orElseThrow(() -> new CustomNotFoundException(OBJECT_NAME, id));
 
@@ -41,7 +42,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toResponse(userEntity);
     }
 
-    public List<UserResponseDto> getAllUsers() {
+    public List<UserResponseDto> getAll() {
         List<UserResponseDto> users = userRepository.findAll().stream()
                 .map(userMapper::toResponse)
                 .toList();
@@ -50,7 +51,7 @@ public class UserServiceImpl implements UserService {
         return users;
     }
 
-    public UserResponseDto updateUser(String id, UserRequestDto request) {
+    public UserResponseDto update(String id, UserRequestDto request) {
         UserEntity userEntity = userRepository.findById(id)
                 .orElseThrow(() -> new CustomNotFoundException(OBJECT_NAME, id));
 
@@ -61,7 +62,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toResponse(updatedUserEntity);
     }
 
-    public void deleteUser(String id) {
+    public void delete(String id) {
         if (!userRepository.existsById(id)) {
             throw new CustomNotFoundException(OBJECT_NAME, id);
         }

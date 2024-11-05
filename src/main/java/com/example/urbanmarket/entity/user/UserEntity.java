@@ -1,15 +1,14 @@
-package com.example.urbanmarket.entity;
-
+package com.example.urbanmarket.entity.user;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "User")
+@Document(collection = "users")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class User {
+public class UserEntity {
 
     @Id
     private String id;

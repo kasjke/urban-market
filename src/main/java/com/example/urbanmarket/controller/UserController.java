@@ -35,8 +35,8 @@ public class UserController {
                             schema = @Schema(implementation = UserResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public void createUser(@RequestBody UserRequestDto request) {
-        userService.createUser(request);
+    public void create(@RequestBody UserRequestDto request) {
+        userService.create(request);
         log.info("{}: {} created: {}",LogEnum.CONTROLLER,OBJECT_NAME, request);
     }
 
@@ -49,8 +49,8 @@ public class UserController {
                             schema = @Schema(implementation = UserResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public UserResponseDto getUserById(@PathVariable String id) {
-        UserResponseDto user = userService.getUserById(id);
+    public UserResponseDto getById(@PathVariable String id) {
+        UserResponseDto user = userService.getById(id);
         log.info("{}: Get {} by id: {}",LogEnum.CONTROLLER,OBJECT_NAME, id);
         return user;
     }
@@ -61,8 +61,8 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "List of users retrieved successfully",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = UserResponseDto.class)))
-    public List<UserResponseDto> getAllUsers() {
-        List<UserResponseDto> users = userService.getAllUsers();
+    public List<UserResponseDto> getAll() {
+        List<UserResponseDto> users = userService.getAll();
         log.info("{}: Show all {}s",LogEnum.CONTROLLER,OBJECT_NAME);
         return users;
     }
@@ -77,8 +77,8 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid data"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public UserResponseDto updateUser(@PathVariable String id, @RequestBody UserRequestDto request) {
-        UserResponseDto updatedUser = userService.updateUser(id, request);
+    public UserResponseDto update(@PathVariable String id, @RequestBody UserRequestDto request) {
+        UserResponseDto updatedUser = userService.update(id, request);
         log.info("{}: Updated {} with id: {}", LogEnum.CONTROLLER,OBJECT_NAME, id);
         return updatedUser;
     }
@@ -90,8 +90,8 @@ public class UserController {
             @ApiResponse(responseCode = "204", description = "User deleted successfully"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public void deleteUser(@PathVariable String id) {
-        userService.deleteUser(id);
+    public void delete(@PathVariable String id) {
+        userService.delete(id);
         log.info("{}: Deleted {} with id: {}",LogEnum.CONTROLLER,OBJECT_NAME, id);
     }
 }

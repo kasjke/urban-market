@@ -10,8 +10,6 @@ import org.mapstruct.Mapper;
 import java.util.List;
 
 
-
-
 @Mapper(componentModel = "spring", config = CustomMapperConfig.class)
 public interface ProductMapper {
     ProductResponseDto toResponseDto(ProductEntity entity);

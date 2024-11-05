@@ -6,13 +6,13 @@ import com.example.urbanmarket.dto.response.UserResponseDto;
 import java.util.List;
 
 public interface UserService {
-    UserResponseDto createUser(UserRequestDto request);
+    UserResponseDto create(UserRequestDto request);
 
-    UserResponseDto getUserById(String id);
+    UserResponseDto getById(String id);
 
-    List<UserResponseDto> getAllUsers();
+    List<UserResponseDto> getAll();
 
-    UserResponseDto updateUser(String id, UserRequestDto request);
+    UserResponseDto update(String id, UserRequestDto request);
 
-    void deleteUser(String id);
+    void delete(String id);
 }

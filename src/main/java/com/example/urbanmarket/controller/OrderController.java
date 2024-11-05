@@ -36,8 +36,8 @@ public class OrderController {
                             schema = @Schema(implementation = OrderResponseDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid data provided")
     })
-    public OrderResponseDto createOrder(@RequestBody OrderRequestDto orderRequestDto) {
-        OrderResponseDto createdOrder = orderService.createOrder(orderRequestDto);
+    public OrderResponseDto create(@RequestBody OrderRequestDto orderRequestDto) {
+        OrderResponseDto createdOrder = orderService.create(orderRequestDto);
         log.info("{}: {} created: {}", LogEnum.CONTROLLER, OBJECT_NAME, createdOrder);
         return createdOrder;
     }
@@ -51,8 +51,8 @@ public class OrderController {
                             schema = @Schema(implementation = OrderResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Order not found")
     })
-    public OrderResponseDto getOrderById(@PathVariable String id) {
-        OrderResponseDto order = orderService.getOrderById(id);
+    public OrderResponseDto getById(@PathVariable String id) {
+        OrderResponseDto order = orderService.getById(id);
         log.info("{}: Get {} by id: {}", LogEnum.CONTROLLER, OBJECT_NAME, id);
         return order;
     }
@@ -66,8 +66,8 @@ public class OrderController {
                             schema = @Schema(implementation = OrderResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "No orders found for the user")
     })
-    public List<OrderResponseDto> getOrdersByUserId(@PathVariable String userId) {
-        List<OrderResponseDto> orders = orderService.getOrdersByUserId(userId);
+    public List<OrderResponseDto> getAllByUserId(@PathVariable String userId) {
+        List<OrderResponseDto> orders = orderService.getAllByUserId(userId);
         log.info("{}: Get all orders for user with id: {}", LogEnum.CONTROLLER, userId);
         return orders;
     }
@@ -82,8 +82,8 @@ public class OrderController {
             @ApiResponse(responseCode = "400", description = "Invalid data provided"),
             @ApiResponse(responseCode = "404", description = "Order not found")
     })
-    public OrderResponseDto updateOrder(@PathVariable String id, @RequestBody OrderRequestDto orderRequestDto) {
-        OrderResponseDto updatedOrder = orderService.updateOrder(id, orderRequestDto);
+    public OrderResponseDto update(@PathVariable String id, @RequestBody OrderRequestDto orderRequestDto) {
+        OrderResponseDto updatedOrder = orderService.update(id, orderRequestDto);
         log.info("{}: Updated {} with id: {}", LogEnum.CONTROLLER, OBJECT_NAME, id);
         return updatedOrder;
     }
@@ -95,8 +95,8 @@ public class OrderController {
             @ApiResponse(responseCode = "204", description = "Order deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Order not found")
     })
-    public void deleteOrder(@PathVariable String id) {
-        orderService.deleteOrder(id);
+    public void delete(@PathVariable String id) {
+        orderService.delete(id);
         log.info("{}: Deleted {} with id: {}", LogEnum.CONTROLLER, OBJECT_NAME, id);
     }
 }

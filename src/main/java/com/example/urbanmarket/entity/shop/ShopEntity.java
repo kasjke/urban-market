@@ -2,9 +2,11 @@ package com.example.urbanmarket.entity.shop;
 
 import com.example.urbanmarket.entity.product.ProductEntity;
 import jakarta.validation.constraints.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
