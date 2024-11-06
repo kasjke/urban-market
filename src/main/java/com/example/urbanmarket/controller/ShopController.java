@@ -4,18 +4,15 @@ import com.example.urbanmarket.dto.request.ShopRequestDto;
 import com.example.urbanmarket.dto.response.ShopResponseDto;
 import com.example.urbanmarket.entity.shop.ShopService;
 import com.example.urbanmarket.exception.LogEnum;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +40,7 @@ public class ShopController {
                             schema = @Schema(implementation = ShopResponseDto.class))}),
             @ApiResponse(responseCode = "400", description = "Validation errors",
                     content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = RuntimeException.class))})
+                        schema = @Schema(implementation = RuntimeException.class))})
     })
     public ShopResponseDto create(@Valid @RequestBody ShopRequestDto request) {
         //accessValidator.isAdmin();

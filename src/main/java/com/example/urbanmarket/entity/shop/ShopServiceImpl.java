@@ -2,7 +2,6 @@ package com.example.urbanmarket.entity.shop;
 
 import com.example.urbanmarket.dto.request.ShopRequestDto;
 import com.example.urbanmarket.dto.response.ShopResponseDto;
-
 import com.example.urbanmarket.entity.product.ProductEntity;
 import com.example.urbanmarket.exception.LogEnum;
 import lombok.RequiredArgsConstructor;

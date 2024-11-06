@@ -1,6 +1,9 @@
 package com.example.urbanmarket.entity.user;
 
-import lombok.*;
+import jakarta.validation.constraints.Email;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,6 +17,7 @@ public class UserEntity {
     private String id;
     private String firstName;
     private String lastName;
+    @Email
     private String email;
     private String phoneNumber;
     private String password;

@@ -3,10 +3,9 @@ package com.example.urbanmarket.entity.cart;
 import com.example.urbanmarket.dto.request.CartRequestDto;
 import com.example.urbanmarket.dto.response.CartResponseDto;
 import com.example.urbanmarket.dto.response.product.ProductInCartOrderResponseDto;
-import com.example.urbanmarket.entity.user.UserEntity;
 import com.example.urbanmarket.entity.product.ProductServiceImpl;
+import com.example.urbanmarket.entity.user.UserEntity;
 import com.example.urbanmarket.exception.LogEnum;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -55,7 +54,7 @@ public class CartServiceImpl implements CartService{
         List<ProductInCartOrderResponseDto> products = productService.getCartOrderResponseFigures(cartDto.products());
         //products.removeIf(elem -> !figureService.existById(elem.figureId())); - This variant isn't working (IDK why...)
         for (ProductInCartOrderResponseDto elem : products){
-            if (!productService.existById(elem.figureId())){
+            if (!productService.existById(elem.productId())){
                 products.remove(elem);
             }
         }
