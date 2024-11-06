@@ -6,13 +6,13 @@ import com.example.urbanmarket.dto.response.OrderResponseDto;
 import java.util.List;
 
 public interface OrderService {
-    OrderResponseDto createOrder(OrderRequestDto orderRequestDto);
+    OrderResponseDto create(OrderRequestDto orderRequestDto);
 
-   OrderResponseDto getOrderById(String id);
+   OrderResponseDto getById(String id);
 
-    List<OrderResponseDto> getOrdersByUserId(String userId);
+    List<OrderResponseDto> getAllByUserId(String userId);
 
-    OrderResponseDto updateOrder(String id, OrderRequestDto orderRequestDto);
+    OrderResponseDto update(String id, OrderRequestDto orderRequestDto);
 
-    void deleteOrder(String id);
+    void delete(String id);
 }

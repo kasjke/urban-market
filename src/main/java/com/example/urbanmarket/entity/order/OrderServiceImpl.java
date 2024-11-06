@@ -22,7 +22,7 @@ public class OrderServiceImpl implements OrderService {
     private static final String OBJECT_NAME = "Order";
 
     @Override
-    public OrderResponseDto createOrder(OrderRequestDto orderRequestDto) {
+    public OrderResponseDto create(OrderRequestDto orderRequestDto) {
         OrderEntity orderEntity = orderMapper.toEntity(orderRequestDto);
         orderEntity.setCreatedAt(LocalDateTime.now());
         OrderEntity savedOrder = orderRepository.save(orderEntity);
@@ -32,7 +32,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponseDto getOrderById(String id) {
+    public OrderResponseDto getById(String id) {
         OrderEntity orderEntity = orderRepository.findById(id)
                 .orElseThrow(() -> new CustomNotFoundException(OBJECT_NAME, id));
 
@@ -41,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponseDto> getOrdersByUserId(String userId) {
+    public List<OrderResponseDto> getAllByUserId(String userId) {
         log.info("{}: Fetching {}s for userId: {}", LogEnum.SERVICE, OBJECT_NAME, userId);
         return orderRepository.findByUserId(userId)
                 .stream()
@@ -50,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponseDto updateOrder(String id, OrderRequestDto orderRequestDto) {
+    public OrderResponseDto update(String id, OrderRequestDto orderRequestDto) {
         OrderEntity orderEntity = orderRepository.findById(id)
                 .orElseThrow(() -> new CustomNotFoundException(OBJECT_NAME, id));
 
@@ -63,7 +63,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void deleteOrder(String id) {
+    public void delete(String id) {
         if (!orderRepository.existsById(id)) {
             throw new CustomNotFoundException(OBJECT_NAME, id);
         }

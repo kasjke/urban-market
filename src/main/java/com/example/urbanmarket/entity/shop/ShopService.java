@@ -11,4 +11,6 @@ public interface ShopService {
     List<ShopResponseDto> getAll();
     ShopResponseDto update(String id, ShopRequestDto requestDto);
     void delete(String id);
+
+
 }
