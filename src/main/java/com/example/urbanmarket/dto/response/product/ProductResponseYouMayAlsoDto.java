@@ -5,13 +5,12 @@ import com.example.urbanmarket.entity.product.sections.SubCategory;
 import java.util.List;
 
 public record ProductResponseYouMayAlsoDto(
-    String name,
-    String description,
-    SubCategory subCategory,
-    int currentPrice,
-    int oldPrice,
-    List<String> images,
-    int purchaseCount,
-    String shopName
+        String id,
+        String name,
+        SubCategory subCategory,
+        int currentPrice,
+        int oldPrice,
+        String image,
+        String shopName
   ){
 }

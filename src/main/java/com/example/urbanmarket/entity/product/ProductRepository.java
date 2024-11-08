@@ -8,8 +8,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface ProductRepository extends MongoRepository<ProductEntity, String> {
-
-
     List<ProductEntity> findByCategoryAndIdNot(Category category, String productId);
     Page<ProductEntity> findAllByOrderByCreatedAtDesc(Pageable pageable);
 

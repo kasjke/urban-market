@@ -1,8 +1,7 @@
 package com.example.urbanmarket.dto.response;
 
-
-
 import java.time.Instant;
+
 public record ReviewResponseDto(
         String id,
         String productId,

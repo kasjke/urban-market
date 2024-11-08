@@ -26,7 +26,6 @@ public interface ProductMapper {
     ProductResponseDto toResponseDto(ProductEntity entity, List<ReviewResponseDto> reviews, List<ProductResponseYouMayAlsoDto> similarProducts);
 
     @Mapping(target = "oldPrice", ignore = true)
-    @Mapping(target = "purchaseCount", ignore = true)
     ProductResponseYouMayAlsoDto toYouMayAlsoDto(ProductEntity entity);
 
     List<ProductResponseDto> toResponseDtoList(List<ProductEntity> entities);
