@@ -3,6 +3,7 @@ package com.example.urbanmarket.entity.shop;
 import com.example.urbanmarket.dto.request.ShopRequestDto;
 import com.example.urbanmarket.dto.response.ShopResponseDto;
 import com.example.urbanmarket.entity.product.ProductEntity;
+import com.example.urbanmarket.entity.shop.contacts.ContactInfo;
 import com.example.urbanmarket.exception.LogEnum;
 import com.example.urbanmarket.exception.exceptions.CustomNotFoundException;
 
@@ -56,6 +57,16 @@ public class ShopServiceImpl implements ShopService{
         repository.save(entity);
         log.info("{}: " + OBJECT_NAME + " (id: {}) was updated", LogEnum.SERVICE, id);
         return mapper.toResponseDto(entity);
+    }
+
+    @Override
+    public ShopResponseDto updateContactInfo(String id, ContactInfo contacts) {
+        ShopEntity shop = findById(id);
+        shop.setContacts(contacts);
+
+        repository.save(shop);
+        log.info("{}: " + OBJECT_NAME + " (id: {}) contacts were updated", LogEnum.SERVICE, id);
+        return null;
     }
 
     @Override

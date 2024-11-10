@@ -1,6 +1,7 @@
 package com.example.urbanmarket.entity.shop;
 
 import com.example.urbanmarket.entity.product.ProductEntity;
+import com.example.urbanmarket.entity.shop.contacts.ContactInfo;
 import jakarta.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
@@ -30,16 +31,19 @@ public class ShopEntity {
 
     private String logo;
 
+    private ContactInfo contacts;
+
     @DBRef
     private List<ProductEntity> products;
 
     @CreatedDate
     private Date createdAt;
 
-    public ShopEntity(String name, String description, String logo, List<ProductEntity> products) {
+    public ShopEntity(String name, String description, String logo, ContactInfo contacts, List<ProductEntity> products) {
         this.name = name;
         this.description = description;
         this.logo = logo;
+        this.contacts = contacts;
         this.products = products;
     }
 

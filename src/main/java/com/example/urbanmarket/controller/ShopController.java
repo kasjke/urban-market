@@ -3,6 +3,7 @@ package com.example.urbanmarket.controller;
 import com.example.urbanmarket.dto.request.ShopRequestDto;
 import com.example.urbanmarket.dto.response.ShopResponseDto;
 import com.example.urbanmarket.entity.shop.ShopService;
+import com.example.urbanmarket.entity.shop.contacts.ContactInfo;
 import com.example.urbanmarket.exception.LogEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -81,6 +82,23 @@ public class ShopController {
     public ShopResponseDto getById(@PathVariable String id) {
         ShopResponseDto shop = service.getById(id);
         log.info("{}: {} (id: {}) has been retrieved", LogEnum.SERVICE, OBJECT_NAME, shop.id());
+        return shop;
+    }
+
+    @PutMapping(URI_WITH_ID+"/contacts")
+    //@SecurityRequirement(name = SEC_REC)
+    @Operation(summary = "Update shop contact info")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Shop contacts updated"),
+            @ApiResponse(responseCode = "404", description = "Shop not found",
+                    content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = RuntimeException.class))})
+    })
+    public ShopResponseDto updateContactInfo(@PathVariable String id, @Valid @RequestBody ContactInfo contacts) {
+        //accessValidator.isAdmin();
+
+        ShopResponseDto shop = service.updateContactInfo(id, contacts);
+        log.info("{}: {} (id: {}) contacts have been updated", LogEnum.CONTROLLER, OBJECT_NAME, id);
         return shop;
     }
 
