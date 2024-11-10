@@ -27,7 +27,6 @@ import java.util.List;
 @RequestMapping("/api/v1/products")
 public class ProductController {
     private static final String URI_WITH_ID = "/{id}";
-    private static final String URI_ID_WITH_REVIEWS = URI_WITH_ID + "/with-reviews";
     private static final String OBJECT_NAME = "Product";
 
     private final ProductService service;
@@ -138,22 +137,6 @@ public class ProductController {
         return bestSellers;
     }
 
-    @GetMapping(URI_ID_WITH_REVIEWS)
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get product by ID with reviews and similar products")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Product with reviews and similar products retrieved",
-                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ProductResponseDto.class))}),
-            @ApiResponse(responseCode = "404", description = "Product not found",
-                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = RuntimeException.class))})
-    })
-    public ProductResponseDto getProductWithReviewsById(@PathVariable String id) {
-        ProductResponseDto product = service.findProductWithReviewsById(id);
-        log.info("{}: {} (id: {}) with reviews and similar products has been retrieved", LogEnum.CONTROLLER, OBJECT_NAME, id);
-        return product;
-    }
     @GetMapping("/on-sale")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get products with discounted prices")
@@ -170,6 +153,4 @@ public class ProductController {
         log.info("{}: Retrieved on sale products, page size: {}", LogEnum.CONTROLLER, pageable.getPageSize());
         return onSaleProducts;
     }
-
-
 }

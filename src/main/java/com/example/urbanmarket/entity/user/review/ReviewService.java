@@ -6,11 +6,14 @@ import com.example.urbanmarket.dto.response.ReviewResponseDto;
 import java.util.List;
 
 public interface ReviewService {
-    ReviewResponseDto createReview(ReviewRequestDto reviewDto);
+    ReviewResponseDto create(ReviewRequestDto reviewDto);
 
-    List<ReviewResponseDto> getReviewsByProductId(String productId);
+    ReviewResponseDto getById(String reviewId);
 
-    void deleteReview(String productId, String reviewId);
+    List<ReviewResponseDto> getAll();
+    List<ReviewResponseDto> getByProductId(String productId);
 
-    ReviewResponseDto getReviewById(String reviewId);
+    void delete(String reviewId);
+
+
 }

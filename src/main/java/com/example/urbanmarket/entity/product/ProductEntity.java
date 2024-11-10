@@ -16,10 +16,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Document(collection = "products")
@@ -95,7 +92,7 @@ public class ProductEntity {
     }
 
     public void setReviews(List<ReviewEntity> reviews) {
-        this.reviews = reviews != null ? reviews : new ArrayList<>();
+        this.reviews = Objects.requireNonNullElseGet(reviews, ArrayList::new);
         updateRating();
     }
     public ProductEntity(String name, String description, SubCategory subCategory, int currentPrice, int amount, List<String> images, String shopId, List<ReviewEntity> reviews) {

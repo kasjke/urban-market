@@ -2,21 +2,22 @@ package com.example.urbanmarket.entity.product;
 
 import com.example.urbanmarket.dto.request.product.ProductInCartRequestDto;
 import com.example.urbanmarket.dto.request.product.ProductRequestDto;
-import com.example.urbanmarket.dto.response.ReviewResponseDto;
 import com.example.urbanmarket.dto.response.product.ProductInCartOrderResponseDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseDto;
-import com.example.urbanmarket.dto.response.product.ProductResponseYouMayAlsoDto;
 import com.example.urbanmarket.entity.shop.ShopServiceImpl;
-import com.example.urbanmarket.entity.user.review.ReviewMapper;
-import com.example.urbanmarket.exception.CustomNotFoundException;
+import com.example.urbanmarket.entity.user.review.ReviewEntity;
+import com.example.urbanmarket.exception.exceptions.CustomNotFoundException;
 import com.example.urbanmarket.exception.LogEnum;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +29,6 @@ public class ProductServiceImpl implements ProductService {
     private final ShopServiceImpl shopService;
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
-    private final ReviewMapper reviewMapper;
 
     @Override
     public ProductResponseDto create(ProductRequestDto productDto) {
@@ -54,6 +54,36 @@ public class ProductServiceImpl implements ProductService {
 
         log.info("{}: all " + OBJECT_NAME + "were obtained", LogEnum.SERVICE);
         return productMapper.toResponseDtoList(entities);
+    }
+
+    @Override
+    public Page<ProductResponseDto> findByOldPriceGreaterThanCurrentPrice(Pageable pageable) {
+        Page<ProductEntity> allProducts = productRepository.findAll(pageable);
+
+        List<ProductEntity> filteredProducts = allProducts.stream()
+                .filter(product -> product.getOldPrice() > product.getCurrentPrice())
+                .toList();
+
+        List<ProductResponseDto> productResponseDtos = productMapper.toResponseDtoList(filteredProducts);
+
+        log.info("{}: Found {} products with old price greater than current price", LogEnum.SERVICE, filteredProducts.size());
+        return new PageImpl<>(productResponseDtos, pageable, allProducts.getTotalElements());
+    }
+
+    @Override
+    public Page<ProductResponseDto> getNewArrivals(Pageable pageable) {
+        Page<ProductResponseDto> newArrivals = productRepository.findAllByOrderByCreatedAtDesc(pageable)
+                .map(productMapper::toResponseDto);
+        log.info("{}: Retrieved {} new arrival products", LogEnum.SERVICE, newArrivals.getTotalElements());
+        return newArrivals;
+    }
+
+    @Override
+    public Page<ProductResponseDto> getBestSellers(Pageable pageable) {
+        Page<ProductResponseDto> bestSellers = productRepository.findAllByOrderByPurchaseCountDesc(pageable)
+                .map(productMapper::toResponseDto);
+        log.info("{}: Retrieved {} best-selling products", LogEnum.SERVICE, bestSellers.getTotalElements());
+        return bestSellers;
     }
 
     @Override
@@ -90,24 +120,6 @@ public class ProductServiceImpl implements ProductService {
                 });
     }
 
-    public ProductResponseDto findProductWithReviewsById(String productId) {
-        ProductEntity productEntity = productRepository.findById(productId)
-                .orElseThrow(() -> new CustomNotFoundException(OBJECT_NAME, productId));
-
-        List<ReviewResponseDto> reviewDtos = productEntity.getReviews().stream()
-                .map(reviewMapper::toResponseDto)
-                .collect(Collectors.toList());
-
-        List<ProductEntity> similarProducts = productRepository.findByCategoryAndIdNot(productEntity.getCategory(), productId);
-        List<ProductResponseYouMayAlsoDto> similarProductDtos = similarProducts.stream()
-                .map(productMapper::toYouMayAlsoDto)
-                .collect(Collectors.toList());
-
-        log.info("{}: {} with Id: {} was found along with reviews and similar products", LogEnum.SERVICE, OBJECT_NAME, productId);
-        return productMapper.toResponseDto(productEntity, reviewDtos, similarProductDtos);
-    }
-
-
     public List<ProductEntity> findByIds(List<String> ids) {
         List<ProductEntity> products = ids.stream()
                 .map(this::findById)
@@ -116,7 +128,7 @@ public class ProductServiceImpl implements ProductService {
         return products;
     }
 
-    public List<ProductInCartOrderResponseDto> getCartOrderResponseFigures(List<ProductInCartRequestDto> products) {
+    public List<ProductInCartOrderResponseDto> getCartOrderResponseProducts(List<ProductInCartRequestDto> products) {
         List<ProductInCartOrderResponseDto> cartOrderResponse = products
                 .stream()
                 .map(productDto -> {
@@ -130,41 +142,34 @@ public class ProductServiceImpl implements ProductService {
                     );
                 })
                 .toList();
-        log.info("{}: Cart order response figures built for {} products", LogEnum.SERVICE, cartOrderResponse.size());
+        log.info("{}: Cart order response products built for {} products", LogEnum.SERVICE, cartOrderResponse.size());
         return cartOrderResponse;
     }
 
-    @Override
-    public Page<ProductResponseDto> findByOldPriceGreaterThanCurrentPrice(Pageable pageable) {
-        Page<ProductEntity> allProducts = productRepository.findAll(pageable);
 
-        List<ProductEntity> filteredProducts = allProducts.stream()
-                .filter(product -> product.getOldPrice() > product.getCurrentPrice())
-                .toList();
-
-        List<ProductResponseDto> productResponseDtos = filteredProducts.stream()
-                .map(productMapper::toResponseDto)
-                .collect(Collectors.toList());
-
-        log.info("{}: Found {} products with old price greater than current price", LogEnum.SERVICE, filteredProducts.size());
-        return new PageImpl<>(productResponseDtos, pageable, allProducts.getTotalElements());
+    //REVIEW IN PRODUCT
+    public void addReviewToProduct(ReviewEntity review) {
+        ProductEntity product = findById(review.getProductId());
+        List<ReviewEntity> reviewList = product.getReviews();
+        if (reviewList == null) {
+            reviewList = new ArrayList<>();
+        }
+        reviewList.add(review);
+        product.setReviews(reviewList);
+        productRepository.save(product);
     }
 
-    @Override
-    public Page<ProductResponseDto> getNewArrivals(Pageable pageable) {
-        log.info("{}: Retrieving new arrivals for {}", LogEnum.SERVICE, OBJECT_NAME);
-        Page<ProductResponseDto> newArrivals = productRepository.findAllByOrderByCreatedAtDesc(pageable)
-                .map(productMapper::toResponseDto);
-        log.info("{}: Retrieved {} new arrival products", LogEnum.SERVICE, newArrivals.getTotalElements());
-        return newArrivals;
-    }
+    public void removeReviewFromProduct(ReviewEntity review) {
+        ProductEntity product = findById(review.getProductId());
+        List<ReviewEntity> reviewList = product.getReviews();
 
-    @Override
-    public Page<ProductResponseDto> getBestSellers(Pageable pageable) {
-        Page<ProductResponseDto> bestSellers = productRepository.findAllByOrderByPurchaseCountDesc(pageable)
-                .map(productMapper::toResponseDto);
-        log.info("{}: Retrieved {} best-selling products", LogEnum.SERVICE, bestSellers.getTotalElements());
-        return bestSellers;
+        assert reviewList != null;
+        if (reviewList.contains(review)) {
+            reviewList.remove(review);
+            product.setReviews(reviewList);
+            productRepository.save(product);
+        }else {
+            throw new CustomNotFoundException("Review in the product's review list", review.getId());
+        }
     }
-
 }

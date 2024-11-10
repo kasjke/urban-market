@@ -2,6 +2,7 @@ package com.example.urbanmarket.controller;
 
 import com.example.urbanmarket.dto.request.ReviewRequestDto;
 import com.example.urbanmarket.dto.response.ReviewResponseDto;
+import com.example.urbanmarket.dto.response.product.ProductResponseDto;
 import com.example.urbanmarket.entity.user.review.ReviewService;
 import com.example.urbanmarket.exception.LogEnum;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +14,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,9 +40,26 @@ public class ReviewController {
     })
     public ResponseEntity<ReviewResponseDto> create(
             @Valid @RequestBody ReviewRequestDto reviewDto) {
-        ReviewResponseDto createdReview = reviewService.createReview(reviewDto);
+        ReviewResponseDto createdReview = reviewService.create(reviewDto);
         log.info("{}: {} for product (id: {}) has been created", LogEnum.CONTROLLER, OBJECT_NAME, reviewDto.productId());
         return ResponseEntity.ok(createdReview);
+    }
+
+    @GetMapping("/specific/{productId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Retrieve review by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Review received",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProductResponseDto.class))}),
+            @ApiResponse(responseCode = "404", description = "Review not found",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = RuntimeException.class))})
+    })
+    public ReviewResponseDto getById(@PathVariable String id) {
+        ReviewResponseDto review = reviewService.getById(id);
+        log.info("{}: {}s (id: {}) has been retrieved", LogEnum.CONTROLLER, OBJECT_NAME, id);
+        return review;
     }
 
     @GetMapping("/{productId}")
@@ -51,7 +71,7 @@ public class ReviewController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = RuntimeException.class)))
     })
     public ResponseEntity<List<ReviewResponseDto>> getByProductId(@PathVariable String productId) {
-        List<ReviewResponseDto> reviews = reviewService.getReviewsByProductId(productId);
+        List<ReviewResponseDto> reviews = reviewService.getByProductId(productId);
         log.info("{}: {}s for product (id: {}) have been retrieved", LogEnum.CONTROLLER, OBJECT_NAME, productId);
         return ResponseEntity.ok(reviews);
     }
@@ -63,11 +83,9 @@ public class ReviewController {
             @ApiResponse(responseCode = "404", description = "Review not found",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = RuntimeException.class)))
     })
-    public ResponseEntity<Void> delete(
-            @RequestParam String productId,
-            @PathVariable String reviewId) {
-        reviewService.deleteReview(productId, reviewId);
-        log.info("{}: {} (id: {}) for product (id: {}) has been deleted", LogEnum.CONTROLLER, OBJECT_NAME, reviewId, productId);
+    public ResponseEntity<Void> delete(@PathVariable String reviewId) {
+        reviewService.delete(reviewId);
+        log.info("{}: {} (id: {}) has been deleted", LogEnum.CONTROLLER, OBJECT_NAME, reviewId);
         return ResponseEntity.noContent().build();
     }
 }

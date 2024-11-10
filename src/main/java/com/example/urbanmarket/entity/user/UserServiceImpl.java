@@ -2,8 +2,8 @@ package com.example.urbanmarket.entity.user;
 
 import com.example.urbanmarket.dto.request.UserRequestDto;
 import com.example.urbanmarket.dto.response.UserResponseDto;
-import com.example.urbanmarket.exception.CustomAlreadyExistException;
-import com.example.urbanmarket.exception.CustomNotFoundException;
+import com.example.urbanmarket.exception.exceptions.CustomAlreadyExistException;
+import com.example.urbanmarket.exception.exceptions.CustomNotFoundException;
 import com.example.urbanmarket.exception.LogEnum;
 
 import lombok.RequiredArgsConstructor;
@@ -35,25 +35,21 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserResponseDto getById(String id) {
-        UserEntity userEntity = userRepository.findById(id)
-                .orElseThrow(() -> new CustomNotFoundException(OBJECT_NAME, id));
+        UserEntity userEntity = findById(id);
 
         log.info("{}: {} (Id: {}) was found", LogEnum.SERVICE, OBJECT_NAME, id);
         return userMapper.toResponse(userEntity);
     }
 
     public List<UserResponseDto> getAll() {
-        List<UserResponseDto> users = userRepository.findAll().stream()
-                .map(userMapper::toResponse)
-                .toList();
+        List<UserResponseDto> users = userMapper.toResponseDtoList(userRepository.findAll());
 
         log.info("{}: all {} were obtained", LogEnum.SERVICE, OBJECT_NAME);
         return users;
     }
 
     public UserResponseDto update(String id, UserRequestDto request) {
-        UserEntity userEntity = userRepository.findById(id)
-                .orElseThrow(() -> new CustomNotFoundException(OBJECT_NAME, id));
+        UserEntity userEntity = findById(id);
 
         userMapper.updateUserFromDto(request, userEntity);
         UserEntity updatedUserEntity = userRepository.save(userEntity);
@@ -63,11 +59,12 @@ public class UserServiceImpl implements UserService {
     }
 
     public void delete(String id) {
-        if (!userRepository.existsById(id)) {
-            throw new CustomNotFoundException(OBJECT_NAME, id);
-        }
         userRepository.deleteById(id);
 
         log.info("{}: {} (Id: {}) was deleted", LogEnum.SERVICE, OBJECT_NAME, id);
+    }
+
+    public UserEntity findById(String id) {
+        return userRepository.findById(id).orElseThrow(() -> new CustomNotFoundException(OBJECT_NAME, id));
     }
 }

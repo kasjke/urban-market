@@ -6,11 +6,17 @@ import com.example.urbanmarket.dto.response.product.ProductInCartOrderResponseDt
 import com.example.urbanmarket.entity.product.ProductServiceImpl;
 import com.example.urbanmarket.entity.user.UserEntity;
 import com.example.urbanmarket.exception.LogEnum;
+import com.example.urbanmarket.exception.exceptions.CustomBadRequestException;
+import com.example.urbanmarket.exception.exceptions.CustomNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -51,10 +57,10 @@ public class CartServiceImpl implements CartService{
 
 
         //VALIDATION CHECK | NOT REAL IDS
-        List<ProductInCartOrderResponseDto> products = productService.getCartOrderResponseFigures(cartDto.products());
+        List<ProductInCartOrderResponseDto> products = productService.getCartOrderResponseProducts(cartDto.products());
         //products.removeIf(elem -> !figureService.existById(elem.figureId())); - This variant isn't working (IDK why...)
         for (ProductInCartOrderResponseDto elem : products){
-            if (!productService.existById(elem.productId())){
+            if (!productService.existById(elem.id())){
                 products.remove(elem);
             }
         }
@@ -62,14 +68,10 @@ public class CartServiceImpl implements CartService{
         if (products.isEmpty()) {
             throw new RuntimeException("This request is not valid");
         }
-
-        /*
-        IS CARD ALREADY EXIST
         if (cartRepository.existsByUser(currentUser)) {
             CartEntity cart = cartRepository.findByUser(currentUser);
-            return cartMapper.toResponseDto(addFigures(cart.getId(), products));
+            return cartMapper.toResponseDto(addProducts(cart, products));
         }
-         */
 
         CartEntity newCart = new CartEntity(currentUser, products, getDiscount(cartDto.promoCode()));
         CartEntity savedCart = cartRepository.save(newCart);
@@ -81,10 +83,10 @@ public class CartServiceImpl implements CartService{
     @Override
     public CartResponseDto update(String id, CartRequestDto cartDto) {
         CartEntity cart = findById(id);
-        List<ProductInCartOrderResponseDto> products = productService.getCartOrderResponseFigures(cartDto.products());
+        List<ProductInCartOrderResponseDto> products = productService.getCartOrderResponseProducts(cartDto.products());
 
         if (products.isEmpty()) {
-            throw new RuntimeException("This request is not valid");
+            throw new CustomBadRequestException();
         }
 
         cart.setProducts(products);
@@ -103,7 +105,7 @@ public class CartServiceImpl implements CartService{
     }
 
     public CartEntity findById(String id) {
-        return cartRepository.findById(id).orElseThrow(RuntimeException::new);
+        return cartRepository.findById(id).orElseThrow(() -> new CustomNotFoundException(OBJECT_NAME, id));
     }
 
     private int getDiscount(String promoCode){
@@ -113,5 +115,23 @@ public class CartServiceImpl implements CartService{
 //        }
 
         return discount;
+    }
+
+    private CartEntity addProducts(CartEntity cart, List<ProductInCartOrderResponseDto> products) {
+        List<ProductInCartOrderResponseDto> productsInCart = new ArrayList<>(cart.getProducts());
+
+        Map<String, ProductInCartOrderResponseDto> figureMap = productsInCart.stream()
+                .collect(Collectors.toMap(ProductInCartOrderResponseDto::id, Function.identity()));
+
+        products.forEach(elem -> figureMap.put(elem.id(), elem));
+
+        productsInCart.clear();
+        productsInCart.addAll(figureMap.values());
+
+        cart.setProducts(productsInCart);
+
+        CartEntity savedCart = cartRepository.save(cart);
+        log.info("{}: " + OBJECT_NAME + " (Id: {}) updated product list and total price throughout create method", LogEnum.SERVICE, savedCart.getId());
+        return savedCart;
     }
 }

@@ -1,4 +1,4 @@
-package com.example.urbanmarket.exception;
+package com.example.urbanmarket.exception.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 public class CustomAlreadyExistException extends RuntimeException {
 
-    private static final String ALREADY_EXIST_EXCEPTION_NAME = "This %s already exist. Name = %s";
-    private static final String ALREADY_EXIST_EXCEPTION_PROPERTY_NAME_AND_VALUE = "This %s already exist. %s = %s";
+    private static final String ALREADY_EXIST_EXCEPTION_NAME = "This {} already exist. Name = {}";
+    private static final String ALREADY_EXIST_EXCEPTION_PROPERTY_NAME_AND_VALUE = "This {} already exist. {} = {}";
 
 
     public CustomAlreadyExistException(String objectName, String name) {

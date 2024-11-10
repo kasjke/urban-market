@@ -11,7 +11,6 @@ public interface ProductService {
     ProductResponseDto create(ProductRequestDto requestDto);
 
     ProductResponseDto getById(String id);
-    ProductResponseDto findProductWithReviewsById(String productId);
 
     List<ProductResponseDto> getAll();
     Page<ProductResponseDto> getNewArrivals(Pageable pageable);

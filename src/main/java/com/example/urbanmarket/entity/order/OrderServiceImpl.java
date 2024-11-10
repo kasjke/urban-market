@@ -2,24 +2,24 @@ package com.example.urbanmarket.entity.order;
 
 import com.example.urbanmarket.dto.request.OrderRequestDto;
 import com.example.urbanmarket.dto.response.OrderResponseDto;
-import com.example.urbanmarket.exception.CustomNotFoundException;
+import com.example.urbanmarket.exception.exceptions.CustomNotFoundException;
 import com.example.urbanmarket.exception.LogEnum;
-import lombok.AllArgsConstructor;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
+    private static final String OBJECT_NAME = "Order";
 
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
-    private static final String OBJECT_NAME = "Order";
 
     @Override
     public OrderResponseDto create(OrderRequestDto orderRequestDto) {
@@ -33,8 +33,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponseDto getById(String id) {
-        OrderEntity orderEntity = orderRepository.findById(id)
-                .orElseThrow(() -> new CustomNotFoundException(OBJECT_NAME, id));
+        OrderEntity orderEntity = findById(id);
 
         log.info("{}: {} (Id: {}) was found", LogEnum.SERVICE, OBJECT_NAME, id);
         return orderMapper.toResponseDto(orderEntity);
@@ -43,16 +42,12 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderResponseDto> getAllByUserId(String userId) {
         log.info("{}: Fetching {}s for userId: {}", LogEnum.SERVICE, OBJECT_NAME, userId);
-        return orderRepository.findByUserId(userId)
-                .stream()
-                .map(orderMapper::toResponseDto)
-                .collect(Collectors.toList());
+        return orderMapper.toResponseDtoList(orderRepository.findByUserId(userId));
     }
 
     @Override
     public OrderResponseDto update(String id, OrderRequestDto orderRequestDto) {
-        OrderEntity orderEntity = orderRepository.findById(id)
-                .orElseThrow(() -> new CustomNotFoundException(OBJECT_NAME, id));
+        OrderEntity orderEntity = findById(id);
 
         orderMapper.updateOrderFromDto(orderRequestDto, orderEntity);
         orderEntity.setUpdatedAt(LocalDateTime.now());
@@ -64,10 +59,15 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void delete(String id) {
-        if (!orderRepository.existsById(id)) {
-            throw new CustomNotFoundException(OBJECT_NAME, id);
-        }
         orderRepository.deleteById(id);
         log.info("{}: {} (Id: {}) was deleted", LogEnum.SERVICE, OBJECT_NAME, id);
+    }
+
+    public OrderEntity findById(String id) {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.error("{}: {} (Id: {}) not found", LogEnum.SERVICE, OBJECT_NAME, id);
+                    return new CustomNotFoundException(OBJECT_NAME, id);
+                });
     }
 }

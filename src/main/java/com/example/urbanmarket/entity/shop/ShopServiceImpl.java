@@ -4,6 +4,8 @@ import com.example.urbanmarket.dto.request.ShopRequestDto;
 import com.example.urbanmarket.dto.response.ShopResponseDto;
 import com.example.urbanmarket.entity.product.ProductEntity;
 import com.example.urbanmarket.exception.LogEnum;
+import com.example.urbanmarket.exception.exceptions.CustomNotFoundException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -67,7 +69,7 @@ public class ShopServiceImpl implements ShopService{
     }
 
     public ShopEntity findById(String id){
-        return repository.findById(id).orElseThrow(RuntimeException::new);
+        return repository.findById(id).orElseThrow(() -> new CustomNotFoundException(OBJECT_NAME, id));
     }
 
     public void addProductToShop(ProductEntity product){

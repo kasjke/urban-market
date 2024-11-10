@@ -1,5 +1,7 @@
 package com.example.urbanmarket.exception;
 
+import com.example.urbanmarket.exception.exceptions.CustomAlreadyExistException;
+import com.example.urbanmarket.exception.exceptions.CustomNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;

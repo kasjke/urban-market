@@ -35,9 +35,11 @@ public class UserController {
                             schema = @Schema(implementation = UserResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public void create(@RequestBody UserRequestDto request) {
-        userService.create(request);
+    public UserResponseDto create(@RequestBody UserRequestDto request) {
+        UserResponseDto userResponseDto = userService.create(request);
         log.info("{}: {} created: {}",LogEnum.CONTROLLER,OBJECT_NAME, request);
+
+        return userResponseDto;
     }
 
     @GetMapping(URI_WITH_ID)
