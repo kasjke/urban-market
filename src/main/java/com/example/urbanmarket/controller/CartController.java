@@ -4,14 +4,17 @@ import com.example.urbanmarket.dto.request.CartRequestDto;
 import com.example.urbanmarket.dto.response.CartResponseDto;
 import com.example.urbanmarket.entity.cart.CartService;
 import com.example.urbanmarket.exception.LogEnum;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +36,7 @@ public class CartController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     //@SecurityRequirement(name = SEC_REC)
-    @Operation(description = "create a cart")
+    @Operation(summary = "Create a cart")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Created the cart",
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -67,7 +70,7 @@ public class CartController {
     }
 
     @GetMapping(URI_WITH_ID)
-    @Operation(description = "get a cart by id")
+    @Operation(summary = "Get a cart")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cart found",
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -88,7 +91,7 @@ public class CartController {
 
     @PutMapping(URI_WITH_ID)
     //@SecurityRequirement(name = SEC_REC)
-    @Operation(description = "update a cart by id")
+    @Operation(summary = "Update cart")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Updated the cart",
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -113,7 +116,7 @@ public class CartController {
 
     @DeleteMapping(URI_WITH_ID)
     //@SecurityRequirement(name = SEC_REC)
-    @Operation(description = "delete a cart by id")
+    @Operation(summary = "Delete a cart")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Deleted the cart",
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,

@@ -47,7 +47,7 @@ public class ReviewController {
 
     @GetMapping("/specific/{productId}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Retrieve review by ID")
+    @Operation(summary = "Get review by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Review received",
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -63,7 +63,7 @@ public class ReviewController {
     }
 
     @GetMapping("/{productId}")
-    @Operation(summary = "Retrieve reviews for a product by product ID")
+    @Operation(summary = "Get reviews for a product by product ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of reviews retrieved",
                     content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ReviewResponseDto.class)))),
@@ -77,7 +77,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/{reviewId}")
-    @Operation(summary = "Delete a review by review ID")
+    @Operation(summary = "Delete a review by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Review deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Review not found",
