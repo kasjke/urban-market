@@ -95,6 +95,7 @@ public class ProductEntity {
         this.reviews = Objects.requireNonNullElseGet(reviews, ArrayList::new);
         updateRating();
     }
+
     public ProductEntity(String name, String description, SubCategory subCategory, int currentPrice, int amount, List<String> images, String shopId, List<ReviewEntity> reviews) {
         this.name = name;
         this.description = description;

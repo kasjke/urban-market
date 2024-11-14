@@ -13,8 +13,10 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Document(collection = "carts")
 @Data
@@ -33,30 +35,59 @@ public class ShopEntity {
 
     private ContactInfo contacts;
 
+    private int sold;
+
+    private int positiveReviews;
+
     @DBRef
     private List<ProductEntity> products;
 
     @CreatedDate
     private Date createdAt;
 
+    private void updateStatistics(){
+        int positiveRev = 0;
+        int negativeRev = 0;
+
+        for (ProductEntity elem:products){
+            sold+=elem.getPurchaseCount();
+            double rating = elem.getAverageRating();
+
+            if (rating>=4.0){
+                positiveRev++;
+            } else {
+                negativeRev++;
+            }
+        }
+
+        positiveReviews = 100/(positiveRev+negativeRev)*positiveReviews;
+    }
+
+    public void setProducts(List<ProductEntity> products) {
+        this.products = Objects.requireNonNullElseGet(products, ArrayList::new);
+        updateStatistics();
+    }
+
     public ShopEntity(String name, String description, String logo, ContactInfo contacts, List<ProductEntity> products) {
         this.name = name;
         this.description = description;
         this.logo = logo;
         this.contacts = contacts;
-        this.products = products;
+        setProducts(products);
     }
 
     public void addProduct(ProductEntity product){
         if (isNotEmptyProductList()){
             if (!products.contains(product)){
                 this.products.add(product);
+                updateStatistics();
             }
         }
     }
 
     public void removeProduct(String productId) {
         this.products.removeIf(product -> product.getId().equals(productId));
+        updateStatistics();
     }
 
     private boolean isNotEmptyProductList(){
