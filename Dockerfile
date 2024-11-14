@@ -14,8 +14,8 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY --from=builder /app/build/libs/UrbanZen-0.0.1-SNAPSHOT.jar UrbanZen.jar
+COPY --from=builder /app/build/libs/Urban-market-0.0.1-SNAPSHOT.jar Urban-market.jar
 
 EXPOSE 8080
 
-CMD ["java","-jar","UrbanZen.jar"]
+CMD ["java","-jar","Urban-market.jar"]
