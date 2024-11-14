@@ -10,12 +10,12 @@ COPY . .
 
 RUN gradle clean build -x test --info
 
-FROM openjdk:21-jdk-slim
+FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY --from=builder /app/build/libs/OnlineStore-0.0.1-SNAPSHOT.jar OnlineStore.jar
+COPY --from=builder /app/build/libs/UrbanZen-0.0.1-SNAPSHOT.jar UrbanZen.jar
 
 EXPOSE 8080
 
-CMD ["java","-jar","OnlineStore.jar"]
+CMD ["java","-jar","UrbanZen.jar"]
