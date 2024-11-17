@@ -19,7 +19,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-
     private static final String OBJECT_NAME = "User";
 
     public UserResponseDto create(UserRequestDto request) {

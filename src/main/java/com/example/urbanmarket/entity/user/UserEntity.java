@@ -1,5 +1,8 @@
 package com.example.urbanmarket.entity.user;
 
+import com.example.urbanmarket.enums.Role;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,5 +24,8 @@ public class UserEntity {
     private String email;
     private String phoneNumber;
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
 }

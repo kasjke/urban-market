@@ -1,6 +1,7 @@
 package com.example.urbanmarket.entity.shop;
 
 import com.example.urbanmarket.dto.request.ShopRequestDto;
+import com.example.urbanmarket.dto.response.ShopBannerResponseDto;
 import com.example.urbanmarket.dto.response.ShopResponseDto;
 import com.example.urbanmarket.entity.product.ProductEntity;
 import com.example.urbanmarket.entity.shop.contacts.ContactInfo;
@@ -33,11 +34,11 @@ public class ShopServiceImpl implements ShopService{
     }
 
     @Override
-    public ShopResponseDto getById(String id) {
+    public ShopBannerResponseDto getById(String id) {
         ShopEntity entity = findById(id);
 
         log.info("{}: " + OBJECT_NAME + " (Id: {}) was found", LogEnum.SERVICE, id);
-        return mapper.toResponseDto(entity);
+        return mapper.toBannerResponseDto(entity);
     }
 
     @Override

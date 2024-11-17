@@ -6,3 +6,16 @@ spring:
     mongodb:
       uri: mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@urbanmarket.hbvir.mongodb.net/?retryWrites=true&w=majority&appName=UrbanMarket
       database: UrbanMarket
+
+  mail:
+    host: smtp.gmail.com
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    port: 587
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
