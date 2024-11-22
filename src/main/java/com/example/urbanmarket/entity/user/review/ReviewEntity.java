@@ -1,6 +1,7 @@
 package com.example.urbanmarket.entity.user.review;
 
 import com.example.urbanmarket.entity.product.ProductEntity;
+import com.example.urbanmarket.entity.user.UserEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,4 +29,7 @@ public class ReviewEntity {
 
     @JsonBackReference
     private ProductEntity product;
+
+    @JsonBackReference
+    private UserEntity user;
 }

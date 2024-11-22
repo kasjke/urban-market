@@ -6,8 +6,8 @@ import com.example.urbanmarket.dto.response.product.ProductInCartOrderResponseDt
 import com.example.urbanmarket.entity.product.ProductServiceImpl;
 import com.example.urbanmarket.entity.user.UserEntity;
 import com.example.urbanmarket.exception.LogEnum;
-import com.example.urbanmarket.exception.exceptions.CustomBadRequestException;
-import com.example.urbanmarket.exception.exceptions.CustomNotFoundException;
+import com.example.urbanmarket.exception.exceptions.general.CustomBadRequestException;
+import com.example.urbanmarket.exception.exceptions.general.CustomNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

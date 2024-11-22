@@ -6,7 +6,7 @@ import com.example.urbanmarket.dto.response.product.ProductInCartOrderResponseDt
 import com.example.urbanmarket.dto.response.product.ProductResponseDto;
 import com.example.urbanmarket.entity.shop.ShopServiceImpl;
 import com.example.urbanmarket.entity.user.review.ReviewEntity;
-import com.example.urbanmarket.exception.exceptions.CustomNotFoundException;
+import com.example.urbanmarket.exception.exceptions.general.CustomNotFoundException;
 import com.example.urbanmarket.exception.LogEnum;
 
 import lombok.RequiredArgsConstructor;

@@ -4,7 +4,7 @@ import com.example.urbanmarket.dto.request.ReviewRequestDto;
 import com.example.urbanmarket.dto.response.ReviewResponseDto;
 import com.example.urbanmarket.entity.product.ProductEntity;
 import com.example.urbanmarket.entity.product.ProductServiceImpl;
-import com.example.urbanmarket.exception.exceptions.CustomNotFoundException;
+import com.example.urbanmarket.exception.exceptions.general.CustomNotFoundException;
 import com.example.urbanmarket.exception.LogEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
