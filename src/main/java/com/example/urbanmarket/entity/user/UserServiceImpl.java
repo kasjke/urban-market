@@ -25,7 +25,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-
     private static final String OBJECT_NAME = "User";
 
     @Override

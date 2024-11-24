@@ -25,6 +25,7 @@ repositories {
 
 ext {
     mapstructVersion = "1.5.5.Final"
+    jwtVersion = "0.12.6"
 }
 
 dependencies {
@@ -34,17 +35,23 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    // https://mvnrepository.com/artifact/org.springframework.security/spring-security-core
+// https://mvnrepository.com/artifact/org.springframework.security/spring-security-core
     implementation 'org.springframework.security:spring-security-core:6.3.3'
     // https://mvnrepository.com/artifact/org.springframework.security/spring-security-web
     implementation 'org.springframework.security:spring-security-web:6.3.4'
     // https://mvnrepository.com/artifact/org.springframework.security/spring-security-config
     implementation 'org.springframework.security:spring-security-config:6.3.3'
 
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
-
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '3.3.4'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '3.3.4'
+    implementation "io.jsonwebtoken:jjwt-api:${jwtVersion}"
+    implementation "io.jsonwebtoken:jjwt-impl:${jwtVersion}"
+    implementation "io.jsonwebtoken:jjwt-jackson:${jwtVersion}"
 
 
     compileOnly 'org.projectlombok:lombok'

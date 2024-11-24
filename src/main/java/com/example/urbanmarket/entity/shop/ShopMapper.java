@@ -2,6 +2,7 @@ package com.example.urbanmarket.entity.shop;
 
 import com.example.urbanmarket.config.CustomMapperConfig;
 import com.example.urbanmarket.dto.request.ShopRequestDto;
+import com.example.urbanmarket.dto.response.ShopBannerResponseDto;
 import com.example.urbanmarket.dto.response.ShopResponseDto;
 import com.example.urbanmarket.entity.product.ProductMapper;
 import org.mapstruct.Mapper;
@@ -14,5 +15,6 @@ public interface ShopMapper {
     ShopEntity toEntity(ShopRequestDto dto);
 
     ShopResponseDto toResponseDto(ShopEntity entity);
+    ShopBannerResponseDto toBannerResponseDto(ShopEntity entity);
     List<ShopResponseDto> toResponseDtoList(List<ShopEntity> entities);
 }

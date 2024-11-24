@@ -3,6 +3,8 @@ package com.example.urbanmarket.entity.user;
 import com.example.urbanmarket.entity.order.OrderEntity;
 import com.example.urbanmarket.entity.user.review.ReviewEntity;
 import com.example.urbanmarket.enums.Role;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
@@ -29,6 +31,7 @@ public class UserEntity {
     private String phoneNumber;
     private String password;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @DBRef

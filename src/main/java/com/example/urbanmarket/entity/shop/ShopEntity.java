@@ -87,10 +87,19 @@ public class ShopEntity {
 
     public void removeProduct(String productId) {
         this.products.removeIf(product -> product.getId().equals(productId));
-        updateStatistics();
     }
 
-    private boolean isNotEmptyProductList(){
-        return this.products!=null&&!this.products.isEmpty();
+    private boolean isNotEmptyProductList() {
+        return this.products != null && !this.products.isEmpty();
+    }
+    public void updateSoldAndPositiveReviews() {
+        this.sold = products.stream()
+                .mapToInt(ProductEntity::getPurchaseCount)
+                .sum();
+
+        this.positiveReviews = products.stream()
+                .flatMap(product -> product.getReviews().stream())
+                .mapToInt(review -> review.getRating() >= 4 ? 1 : 0)
+                .sum();
     }
 }
