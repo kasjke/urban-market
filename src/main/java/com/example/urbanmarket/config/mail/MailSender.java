@@ -1,4 +1,4 @@
-package com.example.urbanmarket.utils;
+package com.example.urbanmarket.config.mail;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

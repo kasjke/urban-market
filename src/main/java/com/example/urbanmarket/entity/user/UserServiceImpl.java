@@ -3,16 +3,20 @@ package com.example.urbanmarket.entity.user;
 import com.example.urbanmarket.dto.request.UserRequestDto;
 import com.example.urbanmarket.dto.request.auth.SignupRequestDto;
 import com.example.urbanmarket.dto.response.UserResponseDto;
+import com.example.urbanmarket.enums.Role;
 import com.example.urbanmarket.exception.exceptions.general.CustomAlreadyExistException;
 import com.example.urbanmarket.exception.exceptions.general.CustomNotFoundException;
 import com.example.urbanmarket.exception.LogEnum;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -27,6 +31,12 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     private final UserMapper userMapper;
     private static final String OBJECT_NAME = "User";
 
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    public void passwordEncoder(@Lazy PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
     @Override
     public UserResponseDto create(SignupRequestDto request) {
         if (userRepository.existsByEmail(request.email())) {
@@ -34,6 +44,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
 
         UserEntity userEntity = userMapper.toEntity(request);
+        userEntity.setRole(Role.USER);
+        userEntity.setPassword(passwordEncoder.encode(request.password()));
         UserEntity savedUserEntity = userRepository.save(userEntity);
 
         log.info("{}: {} (Id: {}) was created", LogEnum.SERVICE, OBJECT_NAME, savedUserEntity.getId());
@@ -61,6 +73,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         UserEntity userEntity = findById(id);
 
         userMapper.updateUserFromDto(request, userEntity);
+        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
         UserEntity updatedUserEntity = userRepository.save(userEntity);
 
         log.info("{}: {} (Id: {}) was updated", LogEnum.SERVICE, OBJECT_NAME, id);
