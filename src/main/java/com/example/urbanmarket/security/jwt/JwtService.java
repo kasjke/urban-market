@@ -1,4 +1,4 @@
-package com.example.urbanmarket.security;
+package com.example.urbanmarket.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

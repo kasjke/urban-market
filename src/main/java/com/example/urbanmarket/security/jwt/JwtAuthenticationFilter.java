@@ -1,11 +1,8 @@
-package com.example.urbanmarket.security;
+package com.example.urbanmarket.security.jwt;
 
-import com.example.urbanmarket.dto.request.UserRequestDto;
-import com.example.urbanmarket.dto.response.UserResponseDto;
 import com.example.urbanmarket.entity.user.UserRepository;
-import com.example.urbanmarket.entity.user.UserService;
 import com.example.urbanmarket.entity.user.UserEntity;
-import com.example.urbanmarket.exception.exceptions.CustomNotFoundException;
+import com.example.urbanmarket.exception.exceptions.general.CustomNotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

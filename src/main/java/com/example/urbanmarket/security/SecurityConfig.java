@@ -1,6 +1,8 @@
 package com.example.urbanmarket.security;
 
 import com.example.urbanmarket.entity.user.UserService;
+import com.example.urbanmarket.security.jwt.AuthEntryPointJwt;
+import com.example.urbanmarket.security.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,9 +29,9 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig {
 
     private final UserService userService;
-    /*
+
     private final AuthEntryPointJwt unauthorizedHandler;
-    private final JwtRequestFilter jwtRequestFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -47,16 +49,15 @@ public class SecurityConfig {
                                         "/v3/api-docs/**",
                                         "/api-docs/**")
                                 .permitAll()
-                                .requestMatchers("/api/users/**").authenticated()
-                                .requestMatchers("/api/images/**").authenticated()
+                                //.requestMatchers("/api/users/**").authenticated()
+                                //.requestMatchers("/api/images/**").authenticated()
                                 .requestMatchers(HttpMethod.GET, "/api/**")
                                 .permitAll()
                                 .anyRequest().authenticated()
                 );
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-    */
 
     @Bean
     public CorsFilter corsFilter() {

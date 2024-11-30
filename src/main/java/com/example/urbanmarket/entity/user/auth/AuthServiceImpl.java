@@ -5,7 +5,7 @@ import com.example.urbanmarket.dto.request.auth.SignupRequestDto;
 import com.example.urbanmarket.dto.response.UserResponseDto;
 import com.example.urbanmarket.entity.user.UserEntity;
 import com.example.urbanmarket.entity.user.UserServiceImpl;
-import com.example.urbanmarket.security.jwt.JwtUtils;
+import com.example.urbanmarket.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,7 +24,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserServiceImpl userService;
     private final AuthenticationManager authenticationManager;
-    private final JwtUtils jwtUtils;
+    private final JwtService jwtService;
 
     @Override
     public UserResponseDto signUp(SignupRequestDto signupRequestDto) {
@@ -49,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return jwtUtils.generateToken(user);
+        return jwtService.generateToken(user.getId(), user.getEmail(), user.getFirstName()+" "+user.getLastName());
     }
     /*
 
