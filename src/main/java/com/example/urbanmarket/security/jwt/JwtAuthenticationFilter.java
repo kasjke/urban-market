@@ -1,7 +1,7 @@
 package com.example.urbanmarket.security.jwt;
 
-import com.example.urbanmarket.entity.user.UserRepository;
 import com.example.urbanmarket.entity.user.UserEntity;
+import com.example.urbanmarket.entity.user.UserRepository;
 import com.example.urbanmarket.exception.exceptions.general.CustomNotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -15,7 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 
 import java.io.IOException;
 import java.util.Collections;

@@ -1,13 +1,13 @@
 package com.example.urbanmarket.entity.user;
 
+import com.example.urbanmarket.config.mail.MailSender;
 import com.example.urbanmarket.dto.request.UserRequestDto;
 import com.example.urbanmarket.dto.request.auth.SignupRequestDto;
 import com.example.urbanmarket.dto.response.UserResponseDto;
 import com.example.urbanmarket.enums.Role;
+import com.example.urbanmarket.exception.LogEnum;
 import com.example.urbanmarket.exception.exceptions.general.CustomAlreadyExistException;
 import com.example.urbanmarket.exception.exceptions.general.CustomNotFoundException;
-import com.example.urbanmarket.exception.LogEnum;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final MailSender mailSender;
     private static final String OBJECT_NAME = "User";
 
     private PasswordEncoder passwordEncoder;
@@ -47,7 +48,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         userEntity.setRole(Role.USER);
         userEntity.setPassword(passwordEncoder.encode(request.password()));
         UserEntity savedUserEntity = userRepository.save(userEntity);
-
+        mailSender.send(request.email());
         log.info("{}: {} (Id: {}) was created", LogEnum.SERVICE, OBJECT_NAME, savedUserEntity.getId());
         return userMapper.toResponse(savedUserEntity);
     }

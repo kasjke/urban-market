@@ -3,22 +3,21 @@ package com.example.urbanmarket.entity.shop;
 import com.example.urbanmarket.entity.product.ProductEntity;
 import com.example.urbanmarket.entity.shop.contacts.ContactInfo;
 import jakarta.validation.constraints.NotNull;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-@Document(collection = "carts")
+@Document(collection = "shops")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -45,22 +44,46 @@ public class ShopEntity {
     @CreatedDate
     private Date createdAt;
 
-    private void updateStatistics(){
-        int positiveRev = 0;
-        int negativeRev = 0;
 
-        for (ProductEntity elem:products){
-            sold+=elem.getPurchaseCount();
-            double rating = elem.getAverageRating();
 
-            if (rating>=4.0){
-                positiveRev++;
-            } else {
-                negativeRev++;
+    public ShopEntity(String name, String description, String logo, ContactInfo contacts, List<ProductEntity> products) {
+        this.name = name;
+        this.description = description;
+        this.logo = logo;
+        this.contacts = contacts;
+        this.products = Objects.requireNonNullElseGet(products, ArrayList::new);
+        updateStatistics();
+    }
+
+    public void addProduct(ProductEntity product) {
+        if (product == null || product.getId() == null) {
+            throw new IllegalArgumentException("Product or Product ID cannot be null.");
+        }
+        if (products == null) {
+            products = new ArrayList<>();
+        }
+        if (!products.contains(product)) {
+            products.add(product);
+            sold += product.getPurchaseCount();
+            if (product.getAverageRating() >= 4.0) {
+                positiveReviews++;
             }
         }
+    }
 
-        positiveReviews = 100/(positiveRev+negativeRev)*positiveReviews;
+    public void removeProduct(String productId) {
+        if (products != null && !products.isEmpty()) {
+            products.removeIf(product -> {
+                boolean match = product.getId().equals(productId);
+                if (match) {
+                    sold -= product.getPurchaseCount();
+                    if (product.getAverageRating() >= 4.0) {
+                        positiveReviews--;
+                    }
+                }
+                return match;
+            });
+        }
     }
 
     public void setProducts(List<ProductEntity> products) {
@@ -68,38 +91,39 @@ public class ShopEntity {
         updateStatistics();
     }
 
-    public ShopEntity(String name, String description, String logo, ContactInfo contacts, List<ProductEntity> products) {
-        this.name = name;
-        this.description = description;
-        this.logo = logo;
-        this.contacts = contacts;
-        setProducts(products);
+    private void updateStatistics() {
+        updateSoldCount();
+        updatePositiveReviews();
     }
 
-    public void addProduct(ProductEntity product){
-        if (isNotEmptyProductList()){
-            if (!products.contains(product)){
-                this.products.add(product);
-                updateStatistics();
-            }
-        }
+    private void updateSoldCount() {
+        this.sold = CollectionUtils.isEmpty(products)
+                ? 0
+                : products.stream().mapToInt(ProductEntity::getPurchaseCount).sum();
     }
 
-    public void removeProduct(String productId) {
-        this.products.removeIf(product -> product.getId().equals(productId));
-    }
-
-    private boolean isNotEmptyProductList() {
-        return this.products != null && !this.products.isEmpty();
-    }
-    public void updateSoldAndPositiveReviews() {
-        this.sold = products.stream()
-                .mapToInt(ProductEntity::getPurchaseCount)
-                .sum();
-
-        this.positiveReviews = products.stream()
+    public void updatePositiveReviews() {
+        this.positiveReviews = CollectionUtils.isEmpty(products)
+                ? 0
+                : (int) products.stream()
                 .flatMap(product -> product.getReviews().stream())
-                .mapToInt(review -> review.getRating() >= 4 ? 1 : 0)
-                .sum();
+                .filter(review -> review.getRating() >= 4)
+                .count();
+    }
+
+    public int calculateSold() {
+        return CollectionUtils.isEmpty(products)
+                ? 0
+                : products.stream().mapToInt(ProductEntity::getPurchaseCount).sum();
+    }
+
+
+    public int calculatePositiveReviews() {
+        return CollectionUtils.isEmpty(products)
+                ? 0
+                : (int) products.stream()
+                .flatMap(product -> product.getReviews().stream())
+                .filter(review -> review.getRating() >= 4)
+                .count();
     }
 }

@@ -7,7 +7,6 @@ import com.example.urbanmarket.entity.product.ProductEntity;
 import com.example.urbanmarket.entity.shop.contacts.ContactInfo;
 import com.example.urbanmarket.exception.LogEnum;
 import com.example.urbanmarket.exception.exceptions.general.CustomNotFoundException;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

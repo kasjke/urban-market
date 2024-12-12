@@ -4,8 +4,6 @@ package com.example.urbanmarket.entity.order;
 import com.example.urbanmarket.config.CustomMapperConfig;
 import com.example.urbanmarket.dto.request.OrderRequestDto;
 import com.example.urbanmarket.dto.response.OrderResponseDto;
-import com.example.urbanmarket.dto.response.product.ProductResponseDto;
-import com.example.urbanmarket.entity.product.ProductEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

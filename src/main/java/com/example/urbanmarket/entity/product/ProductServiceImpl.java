@@ -1,21 +1,25 @@
 package com.example.urbanmarket.entity.product;
 
+import com.example.urbanmarket.dto.request.RequestUpdatePriceDto;
 import com.example.urbanmarket.dto.request.product.ProductInCartRequestDto;
 import com.example.urbanmarket.dto.request.product.ProductRequestDto;
+import com.example.urbanmarket.dto.response.ResponseUpdatePriceDto;
 import com.example.urbanmarket.dto.response.product.ProductInCartOrderResponseDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseDto;
+import com.example.urbanmarket.dto.response.product.ProductResponseYouMayAlsoDto;
+import com.example.urbanmarket.entity.shop.ShopEntity;
+import com.example.urbanmarket.entity.shop.ShopRepository;
 import com.example.urbanmarket.entity.shop.ShopServiceImpl;
 import com.example.urbanmarket.entity.user.review.ReviewEntity;
-import com.example.urbanmarket.exception.exceptions.general.CustomNotFoundException;
 import com.example.urbanmarket.exception.LogEnum;
-
+import com.example.urbanmarket.exception.exceptions.general.CustomNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +32,7 @@ public class ProductServiceImpl implements ProductService {
     private static final String OBJECT_NAME = "Product";
     private final ShopServiceImpl shopService;
     private final ProductRepository productRepository;
+    private final ShopRepository shopRepository;
     private final ProductMapper productMapper;
 
     @Override
@@ -54,6 +59,17 @@ public class ProductServiceImpl implements ProductService {
 
         log.info("{}: all " + OBJECT_NAME + "were obtained", LogEnum.SERVICE);
         return productMapper.toResponseDtoList(entities);
+    }
+
+    public List<ProductResponseYouMayAlsoDto> findSimilarProducts(String productId) {
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new CustomNotFoundException(OBJECT_NAME, productId));
+
+        List<ProductEntity> similarProducts = productRepository.findBySubCategoryAndIdNot(
+                product.getSubCategory(), product.getId()
+        );
+
+        return productMapper.toResponseYouMayAlsoDtoList(similarProducts);
     }
 
     @Override
@@ -120,6 +136,21 @@ public class ProductServiceImpl implements ProductService {
                 });
     }
 
+    @Transactional
+    public ResponseUpdatePriceDto updateProductPrice(String productId, RequestUpdatePriceDto requestUpdatePriceDto) {
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new CustomNotFoundException(OBJECT_NAME, productId));
+
+        int oldPrice = product.getCurrentPrice();
+        product.setOldPrice(oldPrice);
+        product.setCurrentPrice(requestUpdatePriceDto.newPrice());
+
+        productRepository.save(product);
+
+
+        return new ResponseUpdatePriceDto(oldPrice, requestUpdatePriceDto.newPrice());
+    }
+
     public List<ProductEntity> findByIds(List<String> ids) {
         List<ProductEntity> products = ids.stream()
                 .map(this::findById)
@@ -147,7 +178,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
-    //REVIEW IN PRODUCT
     public void addReviewToProduct(ReviewEntity review) {
         ProductEntity product = findById(review.getProductId());
         List<ReviewEntity> reviewList = product.getReviews();
@@ -157,18 +187,24 @@ public class ProductServiceImpl implements ProductService {
         reviewList.add(review);
         product.setReviews(reviewList);
         productRepository.save(product);
+        ShopEntity shop = shopRepository.findById(product.getShopId())
+                .orElseThrow(() -> new CustomNotFoundException("Shop", product.getShopId()));
+        shop.updatePositiveReviews();
+        shopRepository.save(shop);
     }
 
     public void removeReviewFromProduct(ReviewEntity review) {
         ProductEntity product = findById(review.getProductId());
         List<ReviewEntity> reviewList = product.getReviews();
 
-        assert reviewList != null;
+        if (reviewList == null) {
+            throw new CustomNotFoundException("Review list is null for the product", product.getId());
+        }
         if (reviewList.contains(review)) {
             reviewList.remove(review);
             product.setReviews(reviewList);
             productRepository.save(product);
-        }else {
+        } else {
             throw new CustomNotFoundException("Review in the product's review list", review.getId());
         }
     }
