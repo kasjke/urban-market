@@ -10,18 +10,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 @Configuration
-/*
 @SecurityScheme(
         type = SecuritySchemeType.HTTP,
         scheme = "bearer",
         bearerFormat = "JWT",
         name = "BearerAuth")
-
- */
-
 public class OpenAPIConfig {
 
-    /*
+
     @Bean
     public GroupedOpenApi apiAuth() {
         return GroupedOpenApi.builder()
@@ -29,7 +25,6 @@ public class OpenAPIConfig {
                 .pathsToMatch("/auth/**")
                 .build();
     }
-     */
 
     @Bean
     public GroupedOpenApi apiCartsV1() {

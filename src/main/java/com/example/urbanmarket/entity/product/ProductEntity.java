@@ -3,6 +3,7 @@ package com.example.urbanmarket.entity.product;
 import com.example.urbanmarket.entity.product.sections.Category;
 import com.example.urbanmarket.entity.product.sections.SubCategory;
 import com.example.urbanmarket.entity.user.review.ReviewEntity;
+import com.example.urbanmarket.enums.Color;
 import com.example.urbanmarket.enums.ProductSize;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.validation.constraints.NotNull;
@@ -36,11 +37,17 @@ public class ProductEntity {
     @NotNull
     private String description;
 
+    @Size(min = 10, max = 200)
+    @NotNull
+    private String features;
+
     @NotNull
     private SubCategory subCategory;
 
     @NotNull
     private Category category;
+
+    private List<Color> color;
 
     @NotNull
     private int currentPrice;
@@ -51,11 +58,15 @@ public class ProductEntity {
     @NotNull
     private int amount;
 
+    private String brandCollection;
+
     private List<String> images;
 
     private int purchaseCount;
 
     private String shopId;
+
+    private String DeliverReturn;
  
     @CreatedDate
     private Instant createdAt;
@@ -95,6 +106,7 @@ public class ProductEntity {
         this.reviews = Objects.requireNonNullElseGet(reviews, ArrayList::new);
         updateRating();
     }
+
     public ProductEntity(String name, String description, SubCategory subCategory, int currentPrice, int amount, List<String> images, String shopId, List<ReviewEntity> reviews) {
         this.name = name;
         this.description = description;

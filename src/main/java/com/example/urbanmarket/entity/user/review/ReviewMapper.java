@@ -4,8 +4,6 @@ package com.example.urbanmarket.entity.user.review;
 import com.example.urbanmarket.config.CustomMapperConfig;
 import com.example.urbanmarket.dto.request.ReviewRequestDto;
 import com.example.urbanmarket.dto.response.ReviewResponseDto;
-import com.example.urbanmarket.dto.response.product.ProductResponseDto;
-import com.example.urbanmarket.entity.product.ProductEntity;
 import org.mapstruct.Mapper;
 
 import java.util.List;

@@ -1,6 +1,7 @@
 package com.example.urbanmarket.controller;
 
 import com.example.urbanmarket.dto.request.ShopRequestDto;
+import com.example.urbanmarket.dto.response.ShopBannerResponseDto;
 import com.example.urbanmarket.dto.response.ShopResponseDto;
 import com.example.urbanmarket.entity.shop.ShopService;
 import com.example.urbanmarket.entity.shop.contacts.ContactInfo;
@@ -79,8 +80,8 @@ public class ShopController {
                             schema = @Schema(implementation = RuntimeException.class)) })
 
     })
-    public ShopResponseDto getById(@PathVariable String id) {
-        ShopResponseDto shop = service.getById(id);
+    public ShopBannerResponseDto getById(@PathVariable String id) {
+        ShopBannerResponseDto shop = service.getById(id);
         log.info("{}: {} (id: {}) has been retrieved", LogEnum.SERVICE, OBJECT_NAME, shop.id());
         return shop;
     }

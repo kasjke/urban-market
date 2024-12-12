@@ -1,5 +1,12 @@
 package com.example.urbanmarket.enums;
 
-public enum Role {
-    USER,ADMIN,SELLER
+import org.springframework.security.core.GrantedAuthority;
+
+public enum Role implements GrantedAuthority {
+    USER,ADMIN,SELLER;
+
+    @Override
+    public String getAuthority() {
+        return name();
+    }
 }
