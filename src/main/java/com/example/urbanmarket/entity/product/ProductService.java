@@ -1,7 +1,10 @@
 package com.example.urbanmarket.entity.product;
 
+import com.example.urbanmarket.dto.request.RequestUpdatePriceDto;
 import com.example.urbanmarket.dto.request.product.ProductRequestDto;
+import com.example.urbanmarket.dto.response.ResponseUpdatePriceDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseDto;
+import com.example.urbanmarket.dto.response.product.ProductResponseYouMayAlsoDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,4 +23,8 @@ public interface ProductService {
     ProductResponseDto update(String id, ProductRequestDto requestDto);
 
     void delete(String id);
+
+    List<ProductResponseYouMayAlsoDto> findSimilarProducts(String id);
+
+    ResponseUpdatePriceDto updateProductPrice(String productId, RequestUpdatePriceDto requestUpdatePriceDto);
 }

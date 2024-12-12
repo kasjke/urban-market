@@ -1,6 +1,7 @@
 package com.example.urbanmarket.controller;
 
 import com.example.urbanmarket.dto.request.UserRequestDto;
+import com.example.urbanmarket.dto.request.auth.SignupRequestDto;
 import com.example.urbanmarket.dto.response.UserResponseDto;
 import com.example.urbanmarket.entity.user.UserService;
 import com.example.urbanmarket.exception.LogEnum;
@@ -28,14 +29,14 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Create a new user", description = "Creates a new user with the provided details.")
+    @Operation(summary = "Create a new user", description = "Creates a new user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User created successfully",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = UserResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public UserResponseDto create(@RequestBody UserRequestDto request) {
+    public UserResponseDto create(@RequestBody SignupRequestDto request) {
         UserResponseDto userResponseDto = userService.create(request);
         log.info("{}: {} created: {}",LogEnum.CONTROLLER,OBJECT_NAME, request);
 

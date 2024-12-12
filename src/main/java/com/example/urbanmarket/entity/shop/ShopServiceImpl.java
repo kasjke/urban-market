@@ -1,12 +1,12 @@
 package com.example.urbanmarket.entity.shop;
 
 import com.example.urbanmarket.dto.request.ShopRequestDto;
+import com.example.urbanmarket.dto.response.ShopBannerResponseDto;
 import com.example.urbanmarket.dto.response.ShopResponseDto;
 import com.example.urbanmarket.entity.product.ProductEntity;
 import com.example.urbanmarket.entity.shop.contacts.ContactInfo;
 import com.example.urbanmarket.exception.LogEnum;
-import com.example.urbanmarket.exception.exceptions.CustomNotFoundException;
-
+import com.example.urbanmarket.exception.exceptions.general.CustomNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,11 +33,11 @@ public class ShopServiceImpl implements ShopService{
     }
 
     @Override
-    public ShopResponseDto getById(String id) {
+    public ShopBannerResponseDto getById(String id) {
         ShopEntity entity = findById(id);
 
         log.info("{}: " + OBJECT_NAME + " (Id: {}) was found", LogEnum.SERVICE, id);
-        return mapper.toResponseDto(entity);
+        return mapper.toBannerResponseDto(entity);
     }
 
     @Override

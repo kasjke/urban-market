@@ -6,5 +6,6 @@ import com.example.urbanmarket.entity.shop.contacts.ContactInfo;
 import java.util.List;
 
 public record ShopResponseDto(String id, String name, String description,
-                              String logo, ContactInfo contacts, List<ProductResponseDto> products) {
+                              String logo, ContactInfo contacts, int sold, int positiveReviews,
+                              List<ProductResponseDto> products) {
 }

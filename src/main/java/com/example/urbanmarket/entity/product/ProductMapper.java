@@ -3,10 +3,10 @@ package com.example.urbanmarket.entity.product;
 import com.example.urbanmarket.config.CustomMapperConfig;
 import com.example.urbanmarket.dto.request.product.ProductRequestDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseDto;
+import com.example.urbanmarket.dto.response.product.ProductResponseYouMayAlsoDto;
 import com.example.urbanmarket.entity.product.sections.SubCategory;
 import com.example.urbanmarket.entity.user.review.ReviewMapper;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import java.util.List;
 
@@ -32,4 +32,6 @@ public interface ProductMapper {
         }
         return SubCategory.valueOf(subCategory);
     }
+
+    List<ProductResponseYouMayAlsoDto> toResponseYouMayAlsoDtoList(List<ProductEntity> similarProducts);
 }

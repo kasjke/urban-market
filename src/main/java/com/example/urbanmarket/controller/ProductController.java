@@ -1,7 +1,10 @@
 package com.example.urbanmarket.controller;
 
+import com.example.urbanmarket.dto.request.RequestUpdatePriceDto;
 import com.example.urbanmarket.dto.request.product.ProductRequestDto;
+import com.example.urbanmarket.dto.response.ResponseUpdatePriceDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseDto;
+import com.example.urbanmarket.dto.response.product.ProductResponseYouMayAlsoDto;
 import com.example.urbanmarket.entity.product.ProductService;
 import com.example.urbanmarket.exception.LogEnum;
 import io.swagger.v3.oas.annotations.Operation;
@@ -95,6 +98,22 @@ public class ProductController {
         return product;
     }
 
+    @GetMapping("/{id}/similar-products")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get similar products by ID",
+            description = "Retrieve a list of similar products based on the specified product ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of similar products retrieved",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            array = @ArraySchema(schema = @Schema(implementation = ProductResponseYouMayAlsoDto.class)))}),
+            @ApiResponse(responseCode = "404", description = "Product not found",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = RuntimeException.class))})
+    })
+    public List<ProductResponseYouMayAlsoDto> getSimilarProducts(@PathVariable String id) {
+        return service.findSimilarProducts(id);
+    }
+
     @DeleteMapping(URI_WITH_ID)
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Operation(summary = "Delete product")
@@ -152,5 +171,12 @@ public class ProductController {
         Page<ProductResponseDto> onSaleProducts = service.findByOldPriceGreaterThanCurrentPrice(pageable);
         log.info("{}: Retrieved on sale products, page size: {}", LogEnum.CONTROLLER, pageable.getPageSize());
         return onSaleProducts;
+    }
+    @PatchMapping("/{productId}/price")
+    public ResponseUpdatePriceDto updateProductPrice(
+            @PathVariable String productId,
+            @Valid @RequestBody RequestUpdatePriceDto requestUpdatePriceDto
+    ) {
+        return service.updateProductPrice(productId, requestUpdatePriceDto);
     }
 }
