@@ -7,6 +7,7 @@ import com.example.urbanmarket.dto.response.product.ProductResponseDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseYouMayAlsoDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -27,4 +28,6 @@ public interface ProductService {
     List<ProductResponseYouMayAlsoDto> findSimilarProducts(String id);
 
     ResponseUpdatePriceDto updateProductPrice(String productId, RequestUpdatePriceDto requestUpdatePriceDto);
+
+    String addProduct(ProductRequestDto bookDto, MultipartFile titleImageFile);
 }

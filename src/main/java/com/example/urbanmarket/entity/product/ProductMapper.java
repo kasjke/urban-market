@@ -13,7 +13,6 @@ import java.util.List;
 @Mapper(componentModel = "spring", config = CustomMapperConfig.class, uses = ReviewMapper.class)
 public interface ProductMapper {
 
-    ProductEntity toEntity(ProductResponseDto dto);
 
     ProductEntity toEntity(ProductRequestDto dto);
 

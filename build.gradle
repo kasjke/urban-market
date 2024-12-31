@@ -41,6 +41,11 @@ dependencies {
     implementation 'org.springframework.security:spring-security-web:6.3.4'
     // https://mvnrepository.com/artifact/org.springframework.security/spring-security-config
     implementation 'org.springframework.security:spring-security-config:6.3.3'
+// https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
+// https://mvnrepository.com/artifact/com.dropbox.core/dropbox-core-sdk
+    implementation group: 'com.dropbox.core', name: 'dropbox-core-sdk', version: '7.0.0'
+
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -58,7 +63,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
-
+    testImplementation 'org.springframework:spring-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

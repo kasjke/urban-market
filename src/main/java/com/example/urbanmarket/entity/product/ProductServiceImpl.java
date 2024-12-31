@@ -1,5 +1,6 @@
 package com.example.urbanmarket.entity.product;
 
+import com.example.urbanmarket.dropbox.DropboxService;
 import com.example.urbanmarket.dto.request.RequestUpdatePriceDto;
 import com.example.urbanmarket.dto.request.product.ProductInCartRequestDto;
 import com.example.urbanmarket.dto.request.product.ProductRequestDto;
@@ -13,6 +14,8 @@ import com.example.urbanmarket.entity.shop.ShopServiceImpl;
 import com.example.urbanmarket.entity.user.review.ReviewEntity;
 import com.example.urbanmarket.exception.LogEnum;
 import com.example.urbanmarket.exception.exceptions.general.CustomNotFoundException;
+import com.example.urbanmarket.utils.CustomMultipartFile;
+import com.example.urbanmarket.utils.MultipartFileConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,9 +23,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -34,6 +40,8 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ShopRepository shopRepository;
     private final ProductMapper productMapper;
+    private final DropboxService dropboxService;
+    private final MultipartFileConverter multipartFileConverter;
 
     @Override
     public ProductResponseDto create(ProductRequestDto productDto) {
@@ -150,6 +158,48 @@ public class ProductServiceImpl implements ProductService {
 
         return new ResponseUpdatePriceDto(oldPrice, requestUpdatePriceDto.newPrice());
     }
+
+    @Override
+    public String addProduct(ProductRequestDto productRequestDto, MultipartFile titleImageFile) {
+        if (titleImageFile == null || titleImageFile.isEmpty()) {
+            throw new IllegalArgumentException("Title image file is null or empty");
+        }
+
+        ProductEntity product = productMapper.toEntity(productRequestDto);
+
+        String folderName = "/" + UUID.randomUUID();
+        dropboxService.createFolder(folderName);
+
+        String titleImageLink = dropboxService.uploadImage(
+                folderName + "/title.png",
+                titleImageFile
+        );
+
+        List<String> imageLinks = new ArrayList<>();
+        imageLinks.add(titleImageLink);
+
+        if (productRequestDto.images() != null && !productRequestDto.images().isEmpty()) {
+            AtomicInteger counter = new AtomicInteger(1);
+            productRequestDto.images().forEach(imageBase64 -> {
+                try {
+                    String additionalImageLink = dropboxService.uploadImage(
+                            folderName + "/" + counter.getAndIncrement() + ".png",
+                          multipartFileConverter.base64ToMultipartFile(imageBase64)
+                    );
+                    imageLinks.add(additionalImageLink);
+                } catch (Exception e) {
+                    throw new RuntimeException("Error uploading additional image", e);
+                }
+            });
+        }
+
+        product.setImages(imageLinks);
+
+        productRepository.save(product);
+
+        return titleImageLink;
+    }
+
 
     public List<ProductEntity> findByIds(List<String> ids) {
         List<ProductEntity> products = ids.stream()

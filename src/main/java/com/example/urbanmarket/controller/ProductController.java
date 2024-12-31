@@ -7,6 +7,8 @@ import com.example.urbanmarket.dto.response.product.ProductResponseDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseYouMayAlsoDto;
 import com.example.urbanmarket.entity.product.ProductService;
 import com.example.urbanmarket.exception.LogEnum;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,7 +22,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -33,6 +37,7 @@ public class ProductController {
     private static final String OBJECT_NAME = "Product";
 
     private final ProductService service;
+    private final ObjectMapper objectMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -50,7 +55,20 @@ public class ProductController {
         log.info("{}: {} (id: {}) has been added", LogEnum.SERVICE, OBJECT_NAME, product.id());
         return product;
     }
+    @PostMapping("/add")
+    public ResponseEntity<String> addBook(
+            @RequestParam("productRequestDto") String productRequestDto,
+            @RequestParam("titleImage") MultipartFile titleImageFile
+    ) {
+        ProductRequestDto bookDto;
+        try {
+            bookDto = objectMapper.readValue(productRequestDto, ProductRequestDto.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Invalid JSON format for bookDto", e);
+        }
 
+        return ResponseEntity.ok(service.addProduct(bookDto, titleImageFile));
+    }
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all products")
