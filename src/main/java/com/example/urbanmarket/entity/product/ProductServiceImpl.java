@@ -160,7 +160,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public String addProduct(ProductRequestDto productRequestDto, MultipartFile titleImageFile) {
+    public ProductResponseDto addProduct(ProductRequestDto productRequestDto, MultipartFile titleImageFile) {
         if (titleImageFile == null || titleImageFile.isEmpty()) {
             throw new IllegalArgumentException("Title image file is null or empty");
         }
@@ -197,7 +197,48 @@ public class ProductServiceImpl implements ProductService {
 
         productRepository.save(product);
 
-        return titleImageLink;
+        return productMapper.toResponseDto(product);
+    }
+
+    @Override
+    public ProductResponseDto addProduct(String id, MultipartFile titleImageFile) {
+        if (titleImageFile == null || titleImageFile.isEmpty()) {
+            throw new IllegalArgumentException("Title image file is null or empty");
+        }
+
+        ProductEntity product = findById(id);
+
+        String folderName = "/" + UUID.randomUUID();
+        dropboxService.createFolder(folderName);
+
+        String titleImageLink = dropboxService.uploadImage(
+                folderName + "/title.png",
+                titleImageFile
+        );
+
+        List<String> imageLinks = new ArrayList<>();
+        imageLinks.add(titleImageLink);
+
+        if (product.getImages() != null && !product.getImages().isEmpty()) {
+            AtomicInteger counter = new AtomicInteger(1);
+            product.getImages().forEach(imageBase64 -> {
+                try {
+                    String additionalImageLink = dropboxService.uploadImage(
+                            folderName + "/" + counter.getAndIncrement() + ".png",
+                            multipartFileConverter.base64ToMultipartFile(imageBase64)
+                    );
+                    imageLinks.add(additionalImageLink);
+                } catch (Exception e) {
+                    throw new RuntimeException("Error uploading additional image", e);
+                }
+            });
+        }
+
+        product.setImages(imageLinks);
+
+        productRepository.save(product);
+
+        return productMapper.toResponseDto(product);
     }
 
 

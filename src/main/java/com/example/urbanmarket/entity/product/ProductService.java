@@ -29,5 +29,7 @@ public interface ProductService {
 
     ResponseUpdatePriceDto updateProductPrice(String productId, RequestUpdatePriceDto requestUpdatePriceDto);
 
-    String addProduct(ProductRequestDto bookDto, MultipartFile titleImageFile);
+    ProductResponseDto addProduct(ProductRequestDto bookDto, MultipartFile titleImageFile);
+
+    ProductResponseDto addProduct(String id, MultipartFile titleImageFile);
 }

@@ -10,11 +10,13 @@ import com.example.urbanmarket.exception.LogEnum;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.StringToClassMapItem;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,20 +57,22 @@ public class ProductController {
         log.info("{}: {} (id: {}) has been added", LogEnum.SERVICE, OBJECT_NAME, product.id());
         return product;
     }
-    @PostMapping("/add")
-    public ResponseEntity<String> addBook(
-            @RequestParam("productRequestDto") String productRequestDto,
-            @RequestParam("titleImage") MultipartFile titleImageFile
-    ) {
-        ProductRequestDto bookDto;
-        try {
-            bookDto = objectMapper.readValue(productRequestDto, ProductRequestDto.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Invalid JSON format for bookDto", e);
-        }
 
-        return ResponseEntity.ok(service.addProduct(bookDto, titleImageFile));
+    @PostMapping("/add"+URI_WITH_ID)
+    @Operation(summary = "Upload image")
+    @RequestBody(content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "object", properties = {
+            @StringToClassMapItem(key = "imageFile", value = MultipartFile.class)
+    })))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Received filename of the uploaded image")
+    })
+    public ResponseEntity<ProductResponseDto> addProductWithImage(
+            @PathVariable String id,
+            @RequestParam("image") MultipartFile image
+    ) {
+        return ResponseEntity.ok(service.addProduct(id, image));
     }
+
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all products")
