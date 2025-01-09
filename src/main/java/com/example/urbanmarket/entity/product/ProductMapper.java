@@ -1,6 +1,7 @@
 package com.example.urbanmarket.entity.product;
 
 import com.example.urbanmarket.config.CustomMapperConfig;
+import com.example.urbanmarket.dto.request.ProductAddDto;
 import com.example.urbanmarket.dto.request.product.ProductRequestDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseYouMayAlsoDto;
@@ -15,8 +16,10 @@ public interface ProductMapper {
 
 
     ProductEntity toEntity(ProductRequestDto dto);
+    ProductEntity toAddEntity(ProductAddDto productAddDto);
 
     ProductResponseDto toResponseDto(ProductEntity entity);
+    ProductAddDto toResponseAddDto(ProductEntity entity);
 
 //    @Mapping(target = "oldPrice", ignore = true)
 //    ProductResponseYouMayAlsoDto toYouMayAlsoDto(ProductEntity entity);

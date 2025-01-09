@@ -5,15 +5,9 @@ import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
 
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +17,7 @@ public class DropboxUtils {
     private static final String APP_SECRET = "sqv1vlp9ucwe6q4";
     private static final String REFRESH_TOKEN = System.getenv("REFRESH_TOKEN");
     private static final String TOKEN_ENDPOINT = "https://api.dropbox.com/oauth2/token";
-
+    private static final RestTemplate restTemplate = new RestTemplate();
 
 
     public static DbxClientV2 getClient() throws DbxException {
@@ -57,21 +51,27 @@ public class DropboxUtils {
         }
     }
 
-    private static String refreshAccessToken()   {
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpPost post = new HttpPost(TOKEN_ENDPOINT);
-            post.setHeader("Content-Type", "application/x-www-form-urlencoded");
+    private static String refreshAccessToken() {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
             String body = String.format("grant_type=refresh_token&refresh_token=%s&client_id=%s&client_secret=%s",
                     REFRESH_TOKEN, APP_KEY, APP_SECRET);
-            post.setEntity(new StringEntity(body));
-            try (CloseableHttpResponse response = client.execute(post)) {
-                String responseBody = EntityUtils.toString(response.getEntity());
+
+            HttpEntity<String> request = new HttpEntity<>(body, headers);
+
+            ResponseEntity<String> response = restTemplate.postForEntity(TOKEN_ENDPOINT, request, String.class);
+
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 ObjectMapper mapper = new ObjectMapper();
-                Map<String, Object> map = mapper.readValue(responseBody, HashMap.class);
+                Map<String, Object> map = mapper.readValue(response.getBody(), HashMap.class);
                 return (String) map.get("access_token");
+            } else {
+                throw new RuntimeException("Failed to refresh access token. Response: " + response.getBody());
             }
-        } catch (IOException e) {
-            throw new RuntimeException();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to refresh access token.", e);
         }
     }
 }
