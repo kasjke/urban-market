@@ -1,26 +1,27 @@
 package com.example.urbanmarket.controller;
 
+import com.example.urbanmarket.dto.request.ProductAddDto;
 import com.example.urbanmarket.dto.request.RequestUpdatePriceDto;
 import com.example.urbanmarket.dto.request.product.ProductRequestDto;
 import com.example.urbanmarket.dto.response.ResponseUpdatePriceDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseYouMayAlsoDto;
 import com.example.urbanmarket.entity.product.ProductService;
+import com.example.urbanmarket.enums.Color;
+import com.example.urbanmarket.enums.ProductSize;
 import com.example.urbanmarket.exception.LogEnum;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.StringToClassMapItem;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -57,22 +58,21 @@ public class ProductController {
         log.info("{}: {} (id: {}) has been added", LogEnum.SERVICE, OBJECT_NAME, product.id());
         return product;
     }
-
-    @PostMapping("/add"+URI_WITH_ID)
-    @Operation(summary = "Upload image")
-    @RequestBody(content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "object", properties = {
-            @StringToClassMapItem(key = "imageFile", value = MultipartFile.class)
-    })))
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Received filename of the uploaded image")
-    })
-    public ResponseEntity<ProductResponseDto> addProductWithImage(
-            @PathVariable String id,
-            @RequestParam("image") MultipartFile image
+    @PostMapping("/add")
+    public String addProduct(
+            @RequestParam("productRequestDto") String productRequestDto,
+            @RequestParam("titleImage") MultipartFile titleImageFile,
+            @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImageFiles
     ) {
-        return ResponseEntity.ok(service.addProduct(id, image));
-    }
+        ProductAddDto bookDto;
+        try {
+            bookDto = objectMapper.readValue(productRequestDto, ProductAddDto.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Invalid JSON format for productDto", e);
+        }
 
+        return service.addProduct(bookDto, titleImageFile,additionalImageFiles);
+    }
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all products")
@@ -158,12 +158,35 @@ public class ProductController {
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             array = @ArraySchema(schema = @Schema(implementation = ProductResponseDto.class)))})
     })
-    public Page<ProductResponseDto> getNewArrivals(Pageable pageable) {
-        Page<ProductResponseDto> newArrivals = service.getNewArrivals(pageable);
+    public List<ProductResponseDto> getNewArrivals(Pageable pageable) {
+        List<ProductResponseDto> newArrivals = service.getNewArrivals();
         log.info("{}: Retrieved new arrivals, page size: {}", LogEnum.CONTROLLER, pageable.getPageSize());
         return newArrivals;
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<List<ProductResponseDto>> getFilteredProducts(
+
+            @Parameter(description = "Category name")
+            @RequestParam(required = false) String categoryName,
+            @Parameter(description = "Sort by creation time (ASC/DESC)")
+            @RequestParam(required = false) String createdAt,
+            @Parameter(description = "Sort by price (ASC/DESC)")
+            @RequestParam(required = false) String price,
+            @Parameter(description = "Minimum price value")
+            @RequestParam(required = false) Integer priceMin,
+            @Parameter(description = "Maximum price value")
+            @RequestParam(required = false) Integer priceMax,
+            @Parameter(description = "Color of the product")
+            @RequestParam(required = false) Color color,
+            @Parameter(description = "Size of the product")
+            @RequestParam(required = false) ProductSize size
+    ) {
+        List<ProductResponseDto> products = service.getFilteredProducts(
+                categoryName, createdAt, price, priceMin, priceMax, color, size
+        );
+        return ResponseEntity.ok(products);
+    }
     @GetMapping("/best-sellers")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get best sellers")
@@ -172,9 +195,9 @@ public class ProductController {
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             array = @ArraySchema(schema = @Schema(implementation = ProductResponseDto.class)))})
     })
-    public Page<ProductResponseDto> getBestSellers(Pageable pageable) {
-        Page<ProductResponseDto> bestSellers = service.getBestSellers(pageable);
-        log.info("{}: Retrieved best sellers, page size: {}", LogEnum.CONTROLLER, pageable.getPageSize());
+    public List<ProductResponseDto> getBestSellers() {
+        List<ProductResponseDto> bestSellers = service.getBestSellers();
+        log.info("{}: Retrieved best sellers, page size: ", LogEnum.CONTROLLER);
         return bestSellers;
     }
 
@@ -189,9 +212,9 @@ public class ProductController {
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = RuntimeException.class))})
     })
-    public Page<ProductResponseDto> getOnSaleProducts(Pageable pageable) {
-        Page<ProductResponseDto> onSaleProducts = service.findByOldPriceGreaterThanCurrentPrice(pageable);
-        log.info("{}: Retrieved on sale products, page size: {}", LogEnum.CONTROLLER, pageable.getPageSize());
+    public List<ProductResponseDto> getOnSaleProducts() {
+        List<ProductResponseDto> onSaleProducts = service.findByOldPriceGreaterThanCurrentPrice();
+        log.info("{}: Retrieved on sale products", LogEnum.CONTROLLER);
         return onSaleProducts;
     }
     @PatchMapping("/{productId}/price")
