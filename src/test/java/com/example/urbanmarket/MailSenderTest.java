@@ -1,6 +1,6 @@
 package com.example.urbanmarket;
 
-import com.example.urbanmarket.utils.MailSender;
+import com.example.urbanmarket.config.mail.MailSender;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
