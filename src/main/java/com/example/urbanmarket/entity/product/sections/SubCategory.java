@@ -51,11 +51,10 @@ public enum SubCategory {
                 .filter(sub -> sub.getCategory() == category)
                 .toList();
     }
-
     @JsonCreator
     public static SubCategory fromString(String value) {
         for (SubCategory subCategory : SubCategory.values()) {
-            if (subCategory.name().equalsIgnoreCase(value) || subCategory.displayName.equalsIgnoreCase(value)) {
+            if (subCategory.name().equalsIgnoreCase(value) || subCategory.getDisplayName().equalsIgnoreCase(value)) {
                 return subCategory;
             }
         }

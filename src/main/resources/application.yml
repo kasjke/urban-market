@@ -6,7 +6,10 @@ spring:
     mongodb:
       uri: mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@urbanmarket.hbvir.mongodb.net/?retryWrites=true&w=majority&appName=UrbanMarket
       database: UrbanMarket
-
+    web:
+      pageable:
+        default-page-size: 4
+        max-page-size: 50
 
   mail:
     host: smtp.gmail.com
@@ -20,3 +23,6 @@ spring:
           auth: true
           starttls:
             enable: true
+
+
+
