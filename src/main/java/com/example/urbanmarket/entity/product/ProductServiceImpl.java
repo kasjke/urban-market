@@ -202,13 +202,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public String addProduct(ProductAddDto productAddDto, MultipartFile titleImageFile,
+    public String addProduct(String productId, MultipartFile titleImageFile,
                              List<MultipartFile> additionalImageFiles) {
         if (titleImageFile == null || titleImageFile.isEmpty()) {
             throw new IllegalArgumentException("Title image file is null or empty");
         }
 
-        ProductEntity product = productMapper.toAddEntity(productAddDto);
+        ProductEntity product = findById(productId);
 
         String folderName = "/" + UUID.randomUUID();
         dropboxService.createFolder(folderName);

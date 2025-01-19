@@ -42,8 +42,8 @@ public interface ProductService {
 
     ResponseUpdatePriceDto updateProductPrice(String productId, RequestUpdatePriceDto requestUpdatePriceDto);
 
-    String addProduct(ProductAddDto productAddDto, MultipartFile titleImageFile,
-                      List<MultipartFile> additionalImageFiles);
+    //String addProduct(ProductAddDto productAddDto, MultipartFile titleImageFile, List<MultipartFile> additionalImageFiles);
+    String addProduct(String productId, MultipartFile titleImageFile, List<MultipartFile> additionalImageFiles);
 
     Page<ProductResponseDto> getProductsSortedByPrice(String sortDirection, Pageable pageable);
 }
