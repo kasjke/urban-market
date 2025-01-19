@@ -1,6 +1,5 @@
 package com.example.urbanmarket.controller;
 
-import com.example.urbanmarket.dto.request.ProductAddDto;
 import com.example.urbanmarket.dto.request.RequestUpdatePriceDto;
 import com.example.urbanmarket.dto.request.product.ProductRequestDto;
 import com.example.urbanmarket.dto.response.ResponseUpdatePriceDto;
@@ -10,13 +9,14 @@ import com.example.urbanmarket.entity.product.ProductService;
 import com.example.urbanmarket.enums.Color;
 import com.example.urbanmarket.enums.ProductSize;
 import com.example.urbanmarket.exception.LogEnum;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.StringToClassMapItem;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -60,20 +60,19 @@ public class ProductController {
         return product;
     }
 
-    @PostMapping("/add")
-    public String addProduct(
-            @RequestParam("productRequestDto") String productRequestDto,
-            @RequestParam("titleImage") MultipartFile titleImageFile,
-            @RequestParam(value = "additionalImages", required = false) List<MultipartFile> additionalImageFiles
+    @PostMapping("/add"+URI_WITH_ID)
+    @Operation(summary = "Upload image")
+    @RequestBody(content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "object", properties = {
+            @StringToClassMapItem(key = "image", value = MultipartFile.class)
+    })))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Received filename of the uploaded image")
+    })
+    public ResponseEntity<String> addProductWithImage(
+            @PathVariable String id,
+            @RequestParam("image") MultipartFile image
     ) {
-        ProductAddDto bookDto;
-        try {
-            bookDto = objectMapper.readValue(productRequestDto, ProductAddDto.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Invalid JSON format for productDto", e);
-        }
-
-        return service.addProduct(bookDto, titleImageFile,additionalImageFiles);
+        return ResponseEntity.ok(service.addProduct(id, image, null));
     }
     @GetMapping
     @ResponseStatus(HttpStatus.OK)

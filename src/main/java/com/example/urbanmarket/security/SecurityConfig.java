@@ -52,9 +52,9 @@ public class SecurityConfig {
                                 .permitAll()
                                 //.requestMatchers("/api/users/**").authenticated()
                                 //.requestMatchers("/api/images/**").authenticated()
-                                .requestMatchers(HttpMethod.GET, "/api/**")
+                                .anyRequest()
                                 .permitAll()
-                                .anyRequest().authenticated()
+                                //.anyRequest().authenticated()
                 );
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
