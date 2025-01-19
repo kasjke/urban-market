@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -58,11 +59,12 @@ public class ProductController {
         log.info("{}: {} (id: {}) has been added", LogEnum.SERVICE, OBJECT_NAME, product.id());
         return product;
     }
+
     @PostMapping("/add")
     public String addProduct(
             @RequestParam("productRequestDto") String productRequestDto,
             @RequestParam("titleImage") MultipartFile titleImageFile,
-            @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImageFiles
+            @RequestParam(value = "additionalImages", required = false) List<MultipartFile> additionalImageFiles
     ) {
         ProductAddDto bookDto;
         try {
@@ -165,8 +167,7 @@ public class ProductController {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<ProductResponseDto>> getFilteredProducts(
-
+    public ResponseEntity<Page<ProductResponseDto>> getFilteredProducts(
             @Parameter(description = "Category name")
             @RequestParam(required = false) String categoryName,
             @Parameter(description = "Sort by creation time (ASC/DESC)")
@@ -180,13 +181,16 @@ public class ProductController {
             @Parameter(description = "Color of the product")
             @RequestParam(required = false) Color color,
             @Parameter(description = "Size of the product")
-            @RequestParam(required = false) ProductSize size
+            @RequestParam(required = false) ProductSize size,
+            @Parameter(description = "Pagination and sorting parameters")
+            Pageable pageable
     ) {
-        List<ProductResponseDto> products = service.getFilteredProducts(
-                categoryName, createdAt, price, priceMin, priceMax, color, size
+        Page<ProductResponseDto> products = service.getFilteredProducts(
+                categoryName, createdAt, price, priceMin, priceMax, color, size, pageable
         );
         return ResponseEntity.ok(products);
     }
+
     @GetMapping("/best-sellers")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get best sellers")
@@ -200,7 +204,16 @@ public class ProductController {
         log.info("{}: Retrieved best sellers, page size: ", LogEnum.CONTROLLER);
         return bestSellers;
     }
-
+    @GetMapping("/sorted-by-price")
+    public ResponseEntity<Page<ProductResponseDto>> getProductsSortedByPrice(
+            @Parameter(description = "Sort direction (ASC/DESC)")
+            @RequestParam(defaultValue = "ASC") String sortDirection,
+            @Parameter(description = "Pagination and sorting parameters")
+            Pageable pageable
+    ) {
+        Page<ProductResponseDto> products = service.getProductsSortedByPrice(sortDirection, pageable);
+        return ResponseEntity.ok(products);
+    }
     @GetMapping("/on-sale")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get products with discounted prices")

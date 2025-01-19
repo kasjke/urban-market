@@ -8,6 +8,8 @@ import com.example.urbanmarket.dto.response.product.ProductResponseDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseYouMayAlsoDto;
 import com.example.urbanmarket.enums.Color;
 import com.example.urbanmarket.enums.ProductSize;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -25,7 +27,7 @@ public interface ProductService {
     ProductResponseDto update(String id, ProductRequestDto requestDto);
 
     void delete(String id);
-    List<ProductResponseDto> getFilteredProducts(
+     Page<ProductResponseDto> getFilteredProducts(
 
             String categoryName,
             String createdAt,
@@ -33,7 +35,8 @@ public interface ProductService {
             Integer priceMin,
             Integer priceMax,
             Color color,
-            ProductSize size
+            ProductSize size,
+            Pageable pageable
     );
     List<ProductResponseYouMayAlsoDto> findSimilarProducts(String id);
 
@@ -41,4 +44,6 @@ public interface ProductService {
 
     String addProduct(ProductAddDto productAddDto, MultipartFile titleImageFile,
                       List<MultipartFile> additionalImageFiles);
+
+    Page<ProductResponseDto> getProductsSortedByPrice(String sortDirection, Pageable pageable);
 }

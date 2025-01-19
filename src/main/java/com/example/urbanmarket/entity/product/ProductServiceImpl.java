@@ -17,15 +17,15 @@ import com.example.urbanmarket.enums.Color;
 import com.example.urbanmarket.enums.ProductSize;
 import com.example.urbanmarket.exception.LogEnum;
 import com.example.urbanmarket.exception.exceptions.general.CustomNotFoundException;
-import com.example.urbanmarket.utils.MultipartFileConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,7 +41,6 @@ public class ProductServiceImpl implements ProductService {
     private final ShopRepository shopRepository;
     private final ProductMapper productMapper;
     private final DropboxService dropboxService;
-    private final MultipartFileConverter multipartFileConverter;
 
     @Override
     public ProductResponseDto create(ProductRequestDto productDto) {
@@ -118,67 +117,45 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponseDto> getFilteredProducts(
+    public Page<ProductResponseDto> getFilteredProducts(
             String categoryName,
             String createdAt,
             String price,
             Integer priceMin,
             Integer priceMax,
             Color color,
-            ProductSize size
+            ProductSize size,
+            Pageable pageable
     ) {
-        List<ProductEntity> filteredProducts;
+        Page<ProductEntity> filteredProducts;
 
         if (categoryName != null) {
-            filteredProducts = productRepository.findByCategoryId(categoryName);
+            filteredProducts = productRepository.findBySubCategoryName(categoryName, pageable);
         } else if (priceMin != null && priceMax != null) {
-            filteredProducts = productRepository.findByPriceRange(priceMin, priceMax);
+            filteredProducts = productRepository.findByPriceRange(priceMin, priceMax, pageable);
         } else if (color != null) {
-            filteredProducts = productRepository.findByColor(color);
+            filteredProducts = productRepository.findByColor(color, pageable);
         } else if (size != null) {
-            filteredProducts = productRepository.findBySize(size);
+            filteredProducts = productRepository.findBySize(size, pageable);
         } else {
-            filteredProducts = productRepository.findAll();
+            filteredProducts = productRepository.findAll(pageable);
         }
 
-        if (createdAt != null || price != null) {
-            Comparator<ProductEntity> comparator = createComparator(createdAt, price);
-            filteredProducts.sort(comparator);
+        return filteredProducts.map(productMapper::toResponseDto);
+    }
+    @Override
+    public Page<ProductResponseDto> getProductsSortedByPrice(String sortDirection, Pageable pageable) {
+        Page<ProductEntity> products;
+
+        if ("DESC".equalsIgnoreCase(sortDirection)) {
+            products = productRepository.findAllByOrderByCurrentPriceDesc(pageable);
+        } else {
+            products = productRepository.findAllByOrderByCurrentPriceAsc(pageable);
         }
 
-        return filteredProducts
-                .stream()
-                .map(productMapper::toResponseDto)
-                .toList();
+        return products.map(productMapper::toResponseDto);
     }
 
-    private Comparator<ProductEntity> createComparator(String createdAt, String price) {
-        Comparator<ProductEntity> comparator = Comparator.comparing(product -> 0);
-
-        if (createdAt != null) {
-            Comparator<ProductEntity> createdAtComparator = Comparator.comparing(
-                    ProductEntity::getCreatedAt,
-                    Comparator.nullsLast(Comparator.naturalOrder())
-            );
-            if ("DESC".equalsIgnoreCase(createdAt)) {
-                createdAtComparator = createdAtComparator.reversed();
-            }
-            comparator = comparator.thenComparing(createdAtComparator);
-        }
-
-        if (price != null) {
-            Comparator<ProductEntity> priceComparator = Comparator.comparing(
-                    ProductEntity::getCurrentPrice,
-                    Comparator.nullsLast(Comparator.naturalOrder())
-            );
-            if ("DESC".equalsIgnoreCase(price)) {
-                priceComparator = priceComparator.reversed();
-            }
-            comparator = comparator.thenComparing(priceComparator);
-        }
-
-        return comparator;
-    }
     @Override
     public ProductResponseDto update(String id, ProductRequestDto productDto) {
         ProductEntity fromDb = findById(id);
