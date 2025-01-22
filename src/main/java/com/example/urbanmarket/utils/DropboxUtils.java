@@ -5,6 +5,7 @@ import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,8 +14,10 @@ import java.util.Map;
 
 public class DropboxUtils {
     private static String ACCESS_TOKEN;
-    private static final String APP_KEY = System.getenv("DROPBOX_APP_KEY");
-    private static final String APP_SECRET = System.getenv("DROPBOX_APP_SECRET");
+    @Value("${dropbox.app-key}")
+    private static String APP_KEY;
+    @Value("${dropbox.app-secret}")
+    private static String APP_SECRET;
     private static final String REFRESH_TOKEN = "v3NMnsMy_poAAAAAAAAAMrSA3dS2mzfUwLZVTfDNKk8";
     private static final String TOKEN_ENDPOINT = "https://api.dropbox.com/oauth2/token";
     private static final RestTemplate restTemplate = new RestTemplate();
