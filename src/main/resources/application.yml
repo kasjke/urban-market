@@ -24,5 +24,6 @@ spring:
           starttls:
             enable: true
 
-
-
+dropbox:
+  app-key: ${DROPBOX_APP_KEY}
+  app-secret: ${DROPBOX_APP_SECRET}
