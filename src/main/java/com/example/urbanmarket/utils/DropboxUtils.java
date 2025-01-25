@@ -18,7 +18,7 @@ public class DropboxUtils {
     private static String APP_KEY;
     @Value("${dropbox.app-secret}")
     private static String APP_SECRET;
-    private static final String REFRESH_TOKEN = "v3NMnsMy_poAAAAAAAAAMrSA3dS2mzfUwLZVTfDNKk8";
+    private static final String REFRESH_TOKEN = "U9vixYQnkBEAAAAAAAAAAeJziVrEcgybZnPRHDx6IT9Fc-2llDnfh64sq14Yw1nU";
     private static final String TOKEN_ENDPOINT = "https://api.dropbox.com/oauth2/token";
     private static final RestTemplate restTemplate = new RestTemplate();
 
