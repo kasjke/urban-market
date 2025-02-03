@@ -4,9 +4,12 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/UrbanMarket
-
-
+      uri: mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@urbanmarket.hbvir.mongodb.net/?retryWrites=true&w=majority&appName=UrbanMarket
+      database: UrbanMarket
+    web:
+      pageable:
+        default-page-size: 4
+        max-page-size: 50
 
   mail:
     host: smtp.gmail.com
@@ -20,3 +23,7 @@ spring:
           auth: true
           starttls:
             enable: true
+
+dropbox:
+  app-key: ${DROPBOX_APP_KEY}
+  app-secret: ${DROPBOX_APP_SECRET}

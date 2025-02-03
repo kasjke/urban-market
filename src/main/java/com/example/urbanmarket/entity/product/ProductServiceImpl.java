@@ -1,5 +1,7 @@
 package com.example.urbanmarket.entity.product;
 
+import com.example.urbanmarket.dropbox.DropboxService;
+import com.example.urbanmarket.dto.request.ProductAddDto;
 import com.example.urbanmarket.dto.request.RequestUpdatePriceDto;
 import com.example.urbanmarket.dto.request.product.ProductInCartRequestDto;
 import com.example.urbanmarket.dto.request.product.ProductRequestDto;
@@ -11,18 +13,22 @@ import com.example.urbanmarket.entity.shop.ShopEntity;
 import com.example.urbanmarket.entity.shop.ShopRepository;
 import com.example.urbanmarket.entity.shop.ShopServiceImpl;
 import com.example.urbanmarket.entity.user.review.ReviewEntity;
+import com.example.urbanmarket.enums.Color;
+import com.example.urbanmarket.enums.ProductSize;
 import com.example.urbanmarket.exception.LogEnum;
 import com.example.urbanmarket.exception.exceptions.general.CustomNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -34,6 +40,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ShopRepository shopRepository;
     private final ProductMapper productMapper;
+    private final DropboxService dropboxService;
 
     @Override
     public ProductResponseDto create(ProductRequestDto productDto) {
@@ -73,8 +80,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<ProductResponseDto> findByOldPriceGreaterThanCurrentPrice(Pageable pageable) {
-        Page<ProductEntity> allProducts = productRepository.findAll(pageable);
+    public List<ProductResponseDto> findByOldPriceGreaterThanCurrentPrice() {
+        List<ProductEntity> allProducts = productRepository
+                .findAll()
+                .stream()
+                .toList();
 
         List<ProductEntity> filteredProducts = allProducts.stream()
                 .filter(product -> product.getOldPrice() > product.getCurrentPrice())
@@ -83,23 +93,67 @@ public class ProductServiceImpl implements ProductService {
         List<ProductResponseDto> productResponseDtos = productMapper.toResponseDtoList(filteredProducts);
 
         log.info("{}: Found {} products with old price greater than current price", LogEnum.SERVICE, filteredProducts.size());
-        return new PageImpl<>(productResponseDtos, pageable, allProducts.getTotalElements());
+        return productResponseDtos;
     }
 
     @Override
-    public Page<ProductResponseDto> getNewArrivals(Pageable pageable) {
-        Page<ProductResponseDto> newArrivals = productRepository.findAllByOrderByCreatedAtDesc(pageable)
-                .map(productMapper::toResponseDto);
-        log.info("{}: Retrieved {} new arrival products", LogEnum.SERVICE, newArrivals.getTotalElements());
+    public List<ProductResponseDto> getNewArrivals() {
+        List<ProductResponseDto> newArrivals = productRepository.findAllByOrderByCreatedAtDesc()
+                .stream()
+                .map(productMapper::toResponseDto)
+                .toList();
+        log.info("{}: Retrieved {} new arrival products", LogEnum.SERVICE, newArrivals);
         return newArrivals;
     }
 
     @Override
-    public Page<ProductResponseDto> getBestSellers(Pageable pageable) {
-        Page<ProductResponseDto> bestSellers = productRepository.findAllByOrderByPurchaseCountDesc(pageable)
-                .map(productMapper::toResponseDto);
-        log.info("{}: Retrieved {} best-selling products", LogEnum.SERVICE, bestSellers.getTotalElements());
+    public List<ProductResponseDto> getBestSellers() {
+        List<ProductResponseDto> bestSellers = productRepository.findAllByOrderByPurchaseCountDesc()
+                .stream()
+                .map(productMapper::toResponseDto)
+                .toList();
+        log.info("{}: Retrieved {} best-selling products", LogEnum.SERVICE, bestSellers);
         return bestSellers;
+    }
+
+    @Override
+    public Page<ProductResponseDto> getFilteredProducts(
+            String categoryName,
+            String createdAt,
+            String price,
+            Integer priceMin,
+            Integer priceMax,
+            Color color,
+            ProductSize size,
+            Pageable pageable
+    ) {
+        Page<ProductEntity> filteredProducts;
+
+        if (categoryName != null) {
+            filteredProducts = productRepository.findBySubCategoryName(categoryName, pageable);
+        } else if (priceMin != null && priceMax != null) {
+            filteredProducts = productRepository.findByPriceRange(priceMin, priceMax, pageable);
+        } else if (color != null) {
+            filteredProducts = productRepository.findByColor(color, pageable);
+        } else if (size != null) {
+            filteredProducts = productRepository.findBySize(size, pageable);
+        } else {
+            filteredProducts = productRepository.findAll(pageable);
+        }
+
+        return filteredProducts.map(productMapper::toResponseDto);
+    }
+    @Override
+    public Page<ProductResponseDto> getProductsSortedByPrice(String sortDirection, Pageable pageable) {
+        Page<ProductEntity> products;
+
+        if ("DESC".equalsIgnoreCase(sortDirection)) {
+            products = productRepository.findAllByOrderByCurrentPriceDesc(pageable);
+        } else {
+            products = productRepository.findAllByOrderByCurrentPriceAsc(pageable);
+        }
+
+        return products.map(productMapper::toResponseDto);
     }
 
     @Override
@@ -141,15 +195,54 @@ public class ProductServiceImpl implements ProductService {
         ProductEntity product = productRepository.findById(productId)
                 .orElseThrow(() -> new CustomNotFoundException(OBJECT_NAME, productId));
 
-        int oldPrice = product.getCurrentPrice();
-        product.setOldPrice(oldPrice);
-        product.setCurrentPrice(requestUpdatePriceDto.newPrice());
-
+        product.updatePrice(requestUpdatePriceDto.newPrice());
         productRepository.save(product);
 
-
-        return new ResponseUpdatePriceDto(oldPrice, requestUpdatePriceDto.newPrice());
+        return new ResponseUpdatePriceDto(product.getOldPrice(), product.getCurrentPrice());
     }
+
+    @Override
+    public String addProduct(String productId, MultipartFile titleImageFile,
+                             List<MultipartFile> additionalImageFiles) {
+        if (titleImageFile == null || titleImageFile.isEmpty()) {
+            throw new IllegalArgumentException("Title image file is null or empty");
+        }
+
+        ProductEntity product = findById(productId);
+
+        String folderName = "/" + UUID.randomUUID();
+        dropboxService.createFolder(folderName);
+
+        String titleImageLink = dropboxService.uploadImage(
+                folderName + "/title.png",
+                titleImageFile
+        );
+
+        List<String> imageLinks = new ArrayList<>();
+        imageLinks.add(titleImageLink);
+
+        if (additionalImageFiles != null && !additionalImageFiles.isEmpty()) {
+            AtomicInteger counter = new AtomicInteger(1);
+            additionalImageFiles.forEach(imageFile -> {
+                try {
+                    String additionalImageLink = dropboxService.uploadImage(
+                            folderName + "/" + counter.getAndIncrement() + ".png",
+                            imageFile
+                    );
+                    imageLinks.add(additionalImageLink);
+                } catch (Exception e) {
+                    throw new RuntimeException("Error uploading additional image", e);
+                }
+            });
+        }
+
+        product.setImages(imageLinks);
+
+        productRepository.save(product);
+        shopService.addProductToShop(product);
+        return titleImageLink;
+    }
+
 
     public List<ProductEntity> findByIds(List<String> ids) {
         List<ProductEntity> products = ids.stream()

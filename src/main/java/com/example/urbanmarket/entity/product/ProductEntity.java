@@ -106,8 +106,16 @@ public class ProductEntity {
         this.reviews = Objects.requireNonNullElseGet(reviews, ArrayList::new);
         updateRating();
     }
+    public void setCurrentPrice(int currentPrice) {
+        this.oldPrice = this.currentPrice;
+        this.currentPrice = currentPrice;
+    }
 
     public ProductEntity(String name, String description, SubCategory subCategory, int currentPrice, int amount, List<String> images, String shopId, List<ReviewEntity> reviews) {
+        if (currentPrice < 0) {
+            throw new IllegalArgumentException("Price cannot be negative");
+        }
+
         this.name = name;
         this.description = description;
         this.subCategory = subCategory;
@@ -118,6 +126,11 @@ public class ProductEntity {
         this.images = images;
         this.shopId = shopId;
         this.createdAt = Instant.now();
-        this.reviews = reviews;
+        this.reviews = Objects.requireNonNullElseGet(reviews, ArrayList::new);
+    }
+
+    public void updatePrice(int newPrice) {
+        this.oldPrice = this.currentPrice;
+        this.currentPrice = newPrice;
     }
 }
