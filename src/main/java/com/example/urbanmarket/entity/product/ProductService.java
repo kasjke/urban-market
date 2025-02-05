@@ -6,6 +6,7 @@ import com.example.urbanmarket.dto.request.product.ProductRequestDto;
 import com.example.urbanmarket.dto.response.ResponseUpdatePriceDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseYouMayAlsoDto;
+import com.example.urbanmarket.entity.product.sections.Category;
 import com.example.urbanmarket.enums.Color;
 import com.example.urbanmarket.enums.ProductSize;
 import org.springframework.data.domain.Page;
@@ -46,4 +47,5 @@ public interface ProductService {
     String addProduct(String productId, MultipartFile titleImageFile, List<MultipartFile> additionalImageFiles);
 
     Page<ProductResponseDto> getProductsSortedByPrice(String sortDirection, Pageable pageable);
+    List<ProductResponseDto> getProductsByCategories(String categories);
 }

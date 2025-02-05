@@ -16,7 +16,7 @@ public record ProductResponseDto(
         int oldPrice,
         int amount,
         String brandCollection,
-        String DeliverReturn,
+        String deliverReturn,
         List<Color> color,
         List<ProductSize> product_sizes,
         List<String> images,

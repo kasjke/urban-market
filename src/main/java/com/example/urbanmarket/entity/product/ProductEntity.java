@@ -66,7 +66,7 @@ public class ProductEntity {
 
     private String shopId;
 
-    private String DeliverReturn;
+    private String deliverReturn;
  
     @CreatedDate
     private Instant createdAt;
@@ -111,7 +111,7 @@ public class ProductEntity {
         this.currentPrice = currentPrice;
     }
 
-    public ProductEntity(String name, String description, SubCategory subCategory, int currentPrice, int amount, List<String> images, String shopId, List<ReviewEntity> reviews) {
+    public ProductEntity(String name, String description, SubCategory subCategory, int currentPrice, int amount,String DeliverReturn, List<String> images, String shopId, List<ReviewEntity> reviews) {
         if (currentPrice < 0) {
             throw new IllegalArgumentException("Price cannot be negative");
         }

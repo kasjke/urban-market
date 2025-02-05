@@ -5,7 +5,9 @@ import com.example.urbanmarket.dto.request.product.ProductRequestDto;
 import com.example.urbanmarket.dto.response.ResponseUpdatePriceDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseYouMayAlsoDto;
+import com.example.urbanmarket.entity.product.ProductRepository;
 import com.example.urbanmarket.entity.product.ProductService;
+import com.example.urbanmarket.entity.product.sections.Category;
 import com.example.urbanmarket.enums.Color;
 import com.example.urbanmarket.enums.ProductSize;
 import com.example.urbanmarket.exception.LogEnum;
@@ -37,6 +39,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/products")
 public class ProductController {
+    private final ProductRepository productRepository;
     private static final String URI_WITH_ID = "/{id}";
     private static final String OBJECT_NAME = "Product";
 
@@ -54,7 +57,7 @@ public class ProductController {
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = RuntimeException.class))})
     })
-    public ProductResponseDto create(@Valid @RequestBody ProductRequestDto request) {
+    public ProductResponseDto create(@Valid @org.springframework.web.bind.annotation.RequestBody ProductRequestDto request) {
         ProductResponseDto product = service.create(request);
         log.info("{}: {} (id: {}) has been added", LogEnum.SERVICE, OBJECT_NAME, product.id());
         return product;
@@ -229,11 +232,47 @@ public class ProductController {
         log.info("{}: Retrieved on sale products", LogEnum.CONTROLLER);
         return onSaleProducts;
     }
+
+    @GetMapping("/categories")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get products by category",
+            description = "Retrieve a list of products belonging to the specified category.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of products retrieved successfully",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            array = @ArraySchema(schema = @Schema(implementation = ProductResponseDto.class)))}),
+            @ApiResponse(responseCode = "400", description = "Invalid category name provided",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = RuntimeException.class))}),
+            @ApiResponse(responseCode = "404", description = "No products found for the specified category",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = RuntimeException.class))})
+    })
+    public List<ProductResponseDto> getProductsByCategories(
+            @Parameter(description = "Name of the category to filter products by", required = true, example = "Anime")
+            @RequestParam String category) {
+        return service.getProductsByCategories(category);
+    }
+
     @PatchMapping("/{productId}/price")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Update product price",
+            description = "Update the price of a specific product by its ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Product price updated successfully",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ResponseUpdatePriceDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid input data provided",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = RuntimeException.class))}),
+            @ApiResponse(responseCode = "404", description = "Product not found",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = RuntimeException.class))})
+    })
     public ResponseUpdatePriceDto updateProductPrice(
+            @Parameter(description = "ID of the product to update")
             @PathVariable String productId,
-            @Valid @RequestBody RequestUpdatePriceDto requestUpdatePriceDto
-    ) {
+            @Valid @RequestBody RequestUpdatePriceDto requestUpdatePriceDto) {
         return service.updateProductPrice(productId, requestUpdatePriceDto);
     }
 }

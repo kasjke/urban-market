@@ -9,6 +9,8 @@ import com.example.urbanmarket.dto.response.ResponseUpdatePriceDto;
 import com.example.urbanmarket.dto.response.product.ProductInCartOrderResponseDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseYouMayAlsoDto;
+import com.example.urbanmarket.entity.product.sections.Category;
+import com.example.urbanmarket.entity.product.sections.SubCategory;
 import com.example.urbanmarket.entity.shop.ShopEntity;
 import com.example.urbanmarket.entity.shop.ShopRepository;
 import com.example.urbanmarket.entity.shop.ShopServiceImpl;
@@ -190,6 +192,19 @@ public class ProductServiceImpl implements ProductService {
                 });
     }
 
+    public List<ProductResponseDto> getProductsByCategories(String category) {
+        try {
+            Category categoryEnum = Category.valueOf(category.toUpperCase());
+            List<SubCategory> subCategories = SubCategory.getSubcategoriesForMainCategory(categoryEnum);
+            List<ProductEntity> products = productRepository.findBySubCategoryIn(subCategories);
+
+            return products.stream()
+                    .map(productMapper::toResponseDto)
+                    .collect(Collectors.toList());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid category name: " + category);
+        }
+    }
     @Transactional
     public ResponseUpdatePriceDto updateProductPrice(String productId, RequestUpdatePriceDto requestUpdatePriceDto) {
         ProductEntity product = productRepository.findById(productId)
