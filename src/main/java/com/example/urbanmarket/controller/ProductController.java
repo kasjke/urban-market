@@ -5,20 +5,17 @@ import com.example.urbanmarket.dto.request.product.ProductRequestDto;
 import com.example.urbanmarket.dto.response.ResponseUpdatePriceDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseYouMayAlsoDto;
-import com.example.urbanmarket.entity.product.ProductRepository;
 import com.example.urbanmarket.entity.product.ProductService;
-import com.example.urbanmarket.entity.product.sections.Category;
 import com.example.urbanmarket.enums.Color;
 import com.example.urbanmarket.enums.ProductSize;
 import com.example.urbanmarket.exception.LogEnum;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.StringToClassMapItem;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -39,12 +36,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/products")
 public class ProductController {
-    private final ProductRepository productRepository;
     private static final String URI_WITH_ID = "/{id}";
     private static final String OBJECT_NAME = "Product";
 
     private final ProductService service;
-    private final ObjectMapper objectMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

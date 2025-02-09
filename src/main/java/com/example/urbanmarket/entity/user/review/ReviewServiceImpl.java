@@ -46,7 +46,6 @@ public class ReviewServiceImpl implements ReviewService {
             log.error("{}: Invalid {} Id: '{}'", LogEnum.SERVICE, OBJECT_NAME, reviewId);
             throw new IllegalArgumentException(OBJECT_NAME + reviewId);
         }
-
         ReviewResponseDto reviewResponseDto = reviewMapper.toResponseDto(findById(reviewId));
 
         log.info("{}: {} (Id: {}) was found", LogEnum.SERVICE, OBJECT_NAME, reviewId);

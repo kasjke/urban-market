@@ -1,7 +1,6 @@
 package com.example.urbanmarket.entity.product;
 
 import com.example.urbanmarket.dropbox.DropboxService;
-import com.example.urbanmarket.dto.request.ProductAddDto;
 import com.example.urbanmarket.dto.request.RequestUpdatePriceDto;
 import com.example.urbanmarket.dto.request.product.ProductInCartRequestDto;
 import com.example.urbanmarket.dto.request.product.ProductRequestDto;

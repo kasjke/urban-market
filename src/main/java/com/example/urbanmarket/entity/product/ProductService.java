@@ -1,12 +1,10 @@
 package com.example.urbanmarket.entity.product;
 
-import com.example.urbanmarket.dto.request.ProductAddDto;
 import com.example.urbanmarket.dto.request.RequestUpdatePriceDto;
 import com.example.urbanmarket.dto.request.product.ProductRequestDto;
 import com.example.urbanmarket.dto.response.ResponseUpdatePriceDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseYouMayAlsoDto;
-import com.example.urbanmarket.entity.product.sections.Category;
 import com.example.urbanmarket.enums.Color;
 import com.example.urbanmarket.enums.ProductSize;
 import org.springframework.data.domain.Page;

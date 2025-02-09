@@ -1,6 +1,5 @@
 package com.example.urbanmarket.entity.product;
 
-import com.example.urbanmarket.entity.product.sections.Category;
 import com.example.urbanmarket.entity.product.sections.SubCategory;
 import com.example.urbanmarket.enums.Color;
 import com.example.urbanmarket.enums.ProductSize;

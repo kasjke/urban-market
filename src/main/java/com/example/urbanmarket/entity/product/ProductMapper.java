@@ -7,6 +7,7 @@ import com.example.urbanmarket.dto.response.product.ProductResponseDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseYouMayAlsoDto;
 import com.example.urbanmarket.entity.user.review.ReviewMapper;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public interface ProductMapper {
     ProductEntity toEntity(ProductRequestDto dto);
 
     ProductEntity toAddEntity(ProductAddDto productAddDto);
-
+    @Mapping(target = "subCategory", expression = "java(entity.getSubCategory().getDisplayName())")
     ProductResponseDto toResponseDto(ProductEntity entity);
 
     ProductAddDto toResponseAddDto(ProductEntity entity);
@@ -24,6 +25,10 @@ public interface ProductMapper {
     List<ProductResponseDto> toResponseDtoList(List<ProductEntity> entities);
 
     List<ProductEntity> toEntityList(List<ProductResponseDto> dtos);
+
+
+    @Mapping(target = "subCategory", expression = "java(entity.getSubCategory() != null ? entity.getSubCategory().getDisplayName() : null)")
+    ProductResponseYouMayAlsoDto toResponseYouMayAlsoDto(ProductEntity entity);
 
     List<ProductResponseYouMayAlsoDto> toResponseYouMayAlsoDtoList(List<ProductEntity> similarProducts);
 }
