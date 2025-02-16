@@ -11,6 +11,7 @@ public record ProductResponseDto(
         String name,
         String description,
         String  subCategory,
+        String category,
         int currentPrice,
         int oldPrice,
         int amount,
