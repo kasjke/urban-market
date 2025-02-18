@@ -35,6 +35,6 @@ public interface ProductRepository extends MongoRepository<ProductEntity, String
 
     Page<ProductEntity> findAll(Pageable pageable);
 
-    List<ProductEntity> findAllByOrderByCreatedAtDesc();
+    Page<ProductEntity> findAllByOrderByCreatedAtDesc(Pageable pageable);
     List<ProductEntity> findBySubCategoryIn(List<SubCategory> subCategories);
 }

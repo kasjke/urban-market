@@ -98,14 +98,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponseDto> getNewArrivals() {
-        List<ProductResponseDto> newArrivals = productRepository.findAllByOrderByCreatedAtDesc()
-                .stream()
-                .map(productMapper::toResponseDto)
-                .toList();
-        log.info("{}: Retrieved {} new arrival products", LogEnum.SERVICE, newArrivals);
+    public Page<ProductResponseDto> getNewArrivals(Pageable pageable) {
+        Page<ProductEntity> products = productRepository.findAllByOrderByCreatedAtDesc(pageable);
+        Page<ProductResponseDto> newArrivals = products.map(productMapper::toResponseDto);
+        log.info("{}: Retrieved {} new arrival products", LogEnum.SERVICE, newArrivals.getTotalElements());
         return newArrivals;
     }
+
 
     @Override
     public List<ProductResponseDto> getBestSellers() {

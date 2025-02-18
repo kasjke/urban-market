@@ -149,6 +149,7 @@ public class ProductController {
         log.info("{}: {} (id: {}) has been deleted", LogEnum.CONTROLLER, OBJECT_NAME, id);
     }
 
+
     @GetMapping("/new-arrivals")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get new arrivals")
@@ -157,10 +158,10 @@ public class ProductController {
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             array = @ArraySchema(schema = @Schema(implementation = ProductResponseDto.class)))})
     })
-    public List<ProductResponseDto> getNewArrivals(Pageable pageable) {
-        List<ProductResponseDto> newArrivals = service.getNewArrivals();
-        log.info("{}: Retrieved new arrivals, page size: {}", LogEnum.CONTROLLER, pageable.getPageSize());
-        return newArrivals;
+    public ResponseEntity<Page<ProductResponseDto>> getNewArrivals(Pageable pageable) {
+        Page<ProductResponseDto> newArrivals = service.getNewArrivals(pageable);
+        log.info("{}: Retrieved {} new arrivals, page size: {}", LogEnum.CONTROLLER, newArrivals.getTotalElements(), pageable.getPageSize());
+        return ResponseEntity.ok(newArrivals);
     }
 
     @GetMapping("/filter")

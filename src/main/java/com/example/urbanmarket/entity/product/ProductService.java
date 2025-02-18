@@ -19,7 +19,7 @@ public interface ProductService {
     ProductResponseDto getById(String id);
 
     List<ProductResponseDto> getAll();
-    List<ProductResponseDto> getNewArrivals();
+    Page<ProductResponseDto> getNewArrivals(Pageable pageable);
     List<ProductResponseDto> getBestSellers();
     List<ProductResponseDto> findByOldPriceGreaterThanCurrentPrice();
 
