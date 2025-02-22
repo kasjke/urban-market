@@ -159,14 +159,15 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponseDto update(String id, ProductRequestDto productDto) {
         ProductEntity fromDb = findById(id);
-        ProductEntity entity = productMapper.toEntity(productDto);
-        entity.setId(fromDb.getId());
 
-        productRepository.save(entity);
-        shopService.addProductToShop(entity);
-        log.info("{}: " + OBJECT_NAME + " (id: {}) was updated", LogEnum.SERVICE, id);
-        return productMapper.toResponseDto(entity);
+        productMapper.updateEntityFromDto(productDto, fromDb);
+
+        productRepository.save(fromDb);
+
+        log.info("{}: Product (id: {}) was updated", LogEnum.SERVICE, id);
+        return productMapper.toResponseDto(fromDb);
     }
+
 
     @Override
     public void delete(String id) {

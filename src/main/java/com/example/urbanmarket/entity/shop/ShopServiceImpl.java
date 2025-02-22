@@ -79,25 +79,28 @@ public class ShopServiceImpl implements ShopService{
         repository.deleteById(id);
         log.info("{}: " + OBJECT_NAME + " (id: {}) was deleted", LogEnum.SERVICE, id);
     }
-
+    public ShopEntity findById(String id) {
+       return repository.findById(id)
+               .orElseThrow(()-> new CustomNotFoundException(OBJECT_NAME,id));
+    }
 
 
     public boolean existById(String id){
         return repository.existsById(id);
     }
 
-    public ShopEntity findById(String id){
-        return repository.findById(id).orElseThrow(() -> new CustomNotFoundException(OBJECT_NAME, id));
+    public ShopEntity findByName(String name){
+        return repository.findByName(name).orElseThrow(() -> new CustomNotFoundException(OBJECT_NAME, name));
     }
 
     public void addProductToShop(ProductEntity product){
-        ShopEntity shop = findById(product.getShopId());
+        ShopEntity shop = findByName(product.getShopName());
         shop.addProduct(product);
         repository.save(shop);
     }
 
     public void removeProductFromShop(ProductEntity product){
-        ShopEntity shop = findById(product.getShopId());
+        ShopEntity shop = findByName(product.getShopName());
         shop.removeProduct(product.getId());
         repository.save(shop);
     }

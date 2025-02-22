@@ -8,6 +8,7 @@ import com.example.urbanmarket.dto.response.product.ProductResponseYouMayAlsoDto
 import com.example.urbanmarket.entity.user.review.ReviewMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
@@ -17,9 +18,11 @@ public interface ProductMapper {
     ProductEntity toEntity(ProductRequestDto dto);
 
     ProductEntity toAddEntity(ProductAddDto productAddDto);
-    @Mapping(target = "subCategory", expression = "java(entity.getSubCategory().getDisplayName())")
+    @Mapping(target = "subCategory", expression = "java(entity.getSubCategory() != null ? entity.getSubCategory().getDisplayName() : null)")
     ProductResponseDto toResponseDto(ProductEntity entity);
 
+    @Mapping(target = "id", ignore = true)
+    void updateEntityFromDto(ProductRequestDto dto, @MappingTarget ProductEntity entity);
     ProductAddDto toResponseAddDto(ProductEntity entity);
 
     List<ProductResponseDto> toResponseDtoList(List<ProductEntity> entities);

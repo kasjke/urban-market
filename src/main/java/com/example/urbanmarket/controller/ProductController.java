@@ -113,7 +113,7 @@ public class ProductController {
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = RuntimeException.class))})
     })
-    public ProductResponseDto update(@PathVariable String id, @Valid @RequestBody ProductRequestDto requestDto) {
+    public ProductResponseDto update(@PathVariable String id, @org.springframework.web.bind.annotation.RequestBody ProductRequestDto requestDto) {
         ProductResponseDto product = service.update(id, requestDto);
         log.info("{}: {} (id: {}) has been updated", LogEnum.CONTROLLER, OBJECT_NAME, id);
         return product;

@@ -21,7 +21,7 @@ public record ProductResponseDto(
         List<ProductSize> product_sizes,
         List<String> images,
         int purchaseCount,
-        String shopId,
+        String shopName,
         double averageRating,
         List<ReviewResponseDto> reviews
 ) {}

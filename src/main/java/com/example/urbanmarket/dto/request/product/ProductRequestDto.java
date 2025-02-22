@@ -18,5 +18,5 @@ public record ProductRequestDto(String name,
                                 String deliverReturn,
                                 List<ProductSize> product_sizes,
                                 List<Color> color,
-                                String shopId) {
+                                String shopName) {
 }

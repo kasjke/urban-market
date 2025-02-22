@@ -66,6 +66,8 @@ public class ProductEntity {
 
     private String shopId;
 
+    private String shopName;
+
     private String deliverReturn;
  
     @CreatedDate
