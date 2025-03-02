@@ -1,7 +1,6 @@
 package com.example.urbanmarket.dto.response.product;
 
 import com.example.urbanmarket.dto.response.ReviewResponseDto;
-import com.example.urbanmarket.entity.product.sections.SubCategory;
 import com.example.urbanmarket.enums.Color;
 import com.example.urbanmarket.enums.ProductSize;
 
@@ -11,17 +10,18 @@ public record ProductResponseDto(
         String id,
         String name,
         String description,
-        SubCategory subCategory,
+        String  subCategory,
+        String category,
         int currentPrice,
         int oldPrice,
         int amount,
         String brandCollection,
-        String DeliverReturn,
+        String deliverReturn,
         List<Color> color,
         List<ProductSize> product_sizes,
         List<String> images,
         int purchaseCount,
-        String shopId,
+        String shopName,
         double averageRating,
         List<ReviewResponseDto> reviews
 ) {}

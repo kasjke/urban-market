@@ -1,7 +1,6 @@
 package com.example.urbanmarket.entity.product;
 
 import com.example.urbanmarket.dropbox.DropboxService;
-import com.example.urbanmarket.dto.request.ProductAddDto;
 import com.example.urbanmarket.dto.request.RequestUpdatePriceDto;
 import com.example.urbanmarket.dto.request.product.ProductInCartRequestDto;
 import com.example.urbanmarket.dto.request.product.ProductRequestDto;
@@ -9,6 +8,8 @@ import com.example.urbanmarket.dto.response.ResponseUpdatePriceDto;
 import com.example.urbanmarket.dto.response.product.ProductInCartOrderResponseDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseDto;
 import com.example.urbanmarket.dto.response.product.ProductResponseYouMayAlsoDto;
+import com.example.urbanmarket.entity.product.sections.Category;
+import com.example.urbanmarket.entity.product.sections.SubCategory;
 import com.example.urbanmarket.entity.shop.ShopEntity;
 import com.example.urbanmarket.entity.shop.ShopRepository;
 import com.example.urbanmarket.entity.shop.ShopServiceImpl;
@@ -97,14 +98,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponseDto> getNewArrivals() {
-        List<ProductResponseDto> newArrivals = productRepository.findAllByOrderByCreatedAtDesc()
-                .stream()
-                .map(productMapper::toResponseDto)
-                .toList();
-        log.info("{}: Retrieved {} new arrival products", LogEnum.SERVICE, newArrivals);
+    public Page<ProductResponseDto> getNewArrivals(Pageable pageable) {
+        Page<ProductEntity> products = productRepository.findAllByOrderByCreatedAtDesc(pageable);
+        Page<ProductResponseDto> newArrivals = products.map(productMapper::toResponseDto);
+        log.info("{}: Retrieved {} new arrival products", LogEnum.SERVICE, newArrivals.getTotalElements());
         return newArrivals;
     }
+
 
     @Override
     public List<ProductResponseDto> getBestSellers() {
@@ -159,14 +159,15 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponseDto update(String id, ProductRequestDto productDto) {
         ProductEntity fromDb = findById(id);
-        ProductEntity entity = productMapper.toEntity(productDto);
-        entity.setId(fromDb.getId());
 
-        productRepository.save(entity);
-        shopService.addProductToShop(entity);
-        log.info("{}: " + OBJECT_NAME + " (id: {}) was updated", LogEnum.SERVICE, id);
-        return productMapper.toResponseDto(entity);
+        productMapper.updateEntityFromDto(productDto, fromDb);
+
+        productRepository.save(fromDb);
+
+        log.info("{}: Product (id: {}) was updated", LogEnum.SERVICE, id);
+        return productMapper.toResponseDto(fromDb);
     }
+
 
     @Override
     public void delete(String id) {
@@ -190,6 +191,19 @@ public class ProductServiceImpl implements ProductService {
                 });
     }
 
+    public List<ProductResponseDto> getProductsByCategories(String category) {
+        try {
+            Category categoryEnum = Category.valueOf(category.toUpperCase());
+            List<SubCategory> subCategories = SubCategory.getSubcategoriesForMainCategory(categoryEnum);
+            List<ProductEntity> products = productRepository.findBySubCategoryIn(subCategories);
+
+            return products.stream()
+                    .map(productMapper::toResponseDto)
+                    .collect(Collectors.toList());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid category name: " + category);
+        }
+    }
     @Transactional
     public ResponseUpdatePriceDto updateProductPrice(String productId, RequestUpdatePriceDto requestUpdatePriceDto) {
         ProductEntity product = productRepository.findById(productId)

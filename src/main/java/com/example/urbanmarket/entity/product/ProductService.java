@@ -1,6 +1,5 @@
 package com.example.urbanmarket.entity.product;
 
-import com.example.urbanmarket.dto.request.ProductAddDto;
 import com.example.urbanmarket.dto.request.RequestUpdatePriceDto;
 import com.example.urbanmarket.dto.request.product.ProductRequestDto;
 import com.example.urbanmarket.dto.response.ResponseUpdatePriceDto;
@@ -20,7 +19,7 @@ public interface ProductService {
     ProductResponseDto getById(String id);
 
     List<ProductResponseDto> getAll();
-    List<ProductResponseDto> getNewArrivals();
+    Page<ProductResponseDto> getNewArrivals(Pageable pageable);
     List<ProductResponseDto> getBestSellers();
     List<ProductResponseDto> findByOldPriceGreaterThanCurrentPrice();
 
@@ -46,4 +45,5 @@ public interface ProductService {
     String addProduct(String productId, MultipartFile titleImageFile, List<MultipartFile> additionalImageFiles);
 
     Page<ProductResponseDto> getProductsSortedByPrice(String sortDirection, Pageable pageable);
+    List<ProductResponseDto> getProductsByCategories(String categories);
 }

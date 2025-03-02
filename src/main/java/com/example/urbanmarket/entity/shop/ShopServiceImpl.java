@@ -2,6 +2,7 @@ package com.example.urbanmarket.entity.shop;
 
 import com.example.urbanmarket.dto.request.ShopRequestDto;
 import com.example.urbanmarket.dto.response.ShopBannerResponseDto;
+import com.example.urbanmarket.dto.response.ShopCreateResponseDto;
 import com.example.urbanmarket.dto.response.ShopResponseDto;
 import com.example.urbanmarket.entity.product.ProductEntity;
 import com.example.urbanmarket.entity.shop.contacts.ContactInfo;
@@ -24,12 +25,12 @@ public class ShopServiceImpl implements ShopService{
     private final ShopMapper mapper;
 
     @Override
-    public ShopResponseDto create(ShopRequestDto requestDto) {
+    public ShopCreateResponseDto create(ShopRequestDto requestDto) {
         ShopEntity entity = mapper.toEntity(requestDto);
         entity = repository.save(entity);
 
         log.info("{}: " + OBJECT_NAME + " (Id: {}) was created", LogEnum.SERVICE, entity.getId());
-        return mapper.toResponseDto(entity);
+        return mapper.toResponseCreateDto(entity);
     }
 
     @Override
@@ -39,7 +40,12 @@ public class ShopServiceImpl implements ShopService{
         log.info("{}: " + OBJECT_NAME + " (Id: {}) was found", LogEnum.SERVICE, id);
         return mapper.toBannerResponseDto(entity);
     }
-
+    @Override
+    public ShopResponseDto getShopsByIdWithProducts(String id) {
+        ShopEntity entity = findById(id);
+        log.info("{}: " + OBJECT_NAME + " (Id: {}) was found", LogEnum.SERVICE, id);
+        return mapper.toResponseDto(entity);
+    }
     @Override
     public List<ShopResponseDto> getAll() {
         List<ShopEntity> entities = repository.findAll();
@@ -60,13 +66,12 @@ public class ShopServiceImpl implements ShopService{
     }
 
     @Override
-    public ShopResponseDto updateContactInfo(String id, ContactInfo contacts) {
+    public ContactInfo updateContactInfo(String id, ContactInfo contacts) {
         ShopEntity shop = findById(id);
         shop.setContacts(contacts);
-
         repository.save(shop);
         log.info("{}: " + OBJECT_NAME + " (id: {}) contacts were updated", LogEnum.SERVICE, id);
-        return null;
+        return shop.getContacts();
     }
 
     @Override
@@ -74,23 +79,28 @@ public class ShopServiceImpl implements ShopService{
         repository.deleteById(id);
         log.info("{}: " + OBJECT_NAME + " (id: {}) was deleted", LogEnum.SERVICE, id);
     }
+    public ShopEntity findById(String id) {
+       return repository.findById(id)
+               .orElseThrow(()-> new CustomNotFoundException(OBJECT_NAME,id));
+    }
+
 
     public boolean existById(String id){
         return repository.existsById(id);
     }
 
-    public ShopEntity findById(String id){
-        return repository.findById(id).orElseThrow(() -> new CustomNotFoundException(OBJECT_NAME, id));
+    public ShopEntity findByName(String name){
+        return repository.findByName(name).orElseThrow(() -> new CustomNotFoundException(OBJECT_NAME, name));
     }
 
     public void addProductToShop(ProductEntity product){
-        ShopEntity shop = findById(product.getShopId());
+        ShopEntity shop = findByName(product.getShopName());
         shop.addProduct(product);
         repository.save(shop);
     }
 
     public void removeProductFromShop(ProductEntity product){
-        ShopEntity shop = findById(product.getShopId());
+        ShopEntity shop = findByName(product.getShopName());
         shop.removeProduct(product.getId());
         repository.save(shop);
     }
