@@ -9,7 +9,7 @@ public interface AuthService {
     UserResponseDto signUp(SignupRequestDto signupRequestDto);
 
     String login(LoginRequestDto loginRequestDto) throws Exception;
-    /*
+
     UserResponseDto emailVerification(String emailVerificationCode);
 
     UserResponseDto passwordVerification(String passwordVerificationCode);
@@ -20,5 +20,4 @@ public interface AuthService {
 
     UserResponseDto resetPassword(LoginRequestDto loginRequestDto);
 
-     */
 }

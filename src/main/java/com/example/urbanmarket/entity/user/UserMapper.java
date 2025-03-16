@@ -4,9 +4,7 @@ import com.example.urbanmarket.config.CustomMapperConfig;
 import com.example.urbanmarket.dto.request.UserRequestDto;
 import com.example.urbanmarket.dto.request.auth.SignupRequestDto;
 import com.example.urbanmarket.dto.response.UserResponseDto;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
 import java.util.List;
 

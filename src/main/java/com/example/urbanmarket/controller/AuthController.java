@@ -6,6 +6,7 @@ import com.example.urbanmarket.dto.response.UserResponseDto;
 import com.example.urbanmarket.entity.user.auth.AuthService;
 import com.example.urbanmarket.exception.LogEnum;
 import com.example.urbanmarket.exception.exceptions.general.CustomAlreadyExistException;
+import com.example.urbanmarket.exception.exceptions.general.CustomErrorResponse;
 import com.example.urbanmarket.security.jwt.JwtResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -63,7 +64,6 @@ public class AuthController {
         return userDto;
     }
 
-    /*
     @PostMapping(VERIF_URI+"/email")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Send email verif message")
@@ -73,7 +73,7 @@ public class AuthController {
                     content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = CustomErrorResponse.class)) })
     })
     public void sendEmailVerifMes(@Valid @RequestBody LoginRequestDto loginRequestDto) throws CustomAlreadyExistException {
-        UserResponseDto userDto = authService.sentEmailVerifMes(loginRequestDto.getEmail());
+        UserResponseDto userDto = authService.sentEmailVerifMes(loginRequestDto.email());
         log.info("{}: Email verification email was sent to User (id: {})", LogEnum.CONTROLLER, userDto.id());
     }
 
@@ -98,7 +98,7 @@ public class AuthController {
                     content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = CustomErrorResponse.class)) })
     })
     public void sendPasswordVerifMes(@Valid @RequestBody LoginRequestDto loginRequestDto) throws CustomAlreadyExistException {
-        UserResponseDto userDto = authService.sentPasswordVerifMes(loginRequestDto.getEmail());
+        UserResponseDto userDto = authService.sentPasswordVerifMes(loginRequestDto.email());
         log.info("{}: Password verification email was sent to User (id: {})", LogEnum.CONTROLLER, userDto.id());
     }
 
@@ -126,6 +126,4 @@ public class AuthController {
         UserResponseDto userDto = authService.resetPassword(loginRequestDto);
         log.info("{}: User (id: {}) password was reset", LogEnum.CONTROLLER, userDto.id());
     }
-
-     */
 }

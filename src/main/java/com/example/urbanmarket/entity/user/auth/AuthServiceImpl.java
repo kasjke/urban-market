@@ -1,13 +1,18 @@
 package com.example.urbanmarket.entity.user.auth;
 
+import com.example.urbanmarket.dto.request.UserRequestDto;
 import com.example.urbanmarket.dto.request.auth.LoginRequestDto;
 import com.example.urbanmarket.dto.request.auth.SignupRequestDto;
 import com.example.urbanmarket.dto.response.UserResponseDto;
 import com.example.urbanmarket.entity.user.UserEntity;
 import com.example.urbanmarket.entity.user.UserServiceImpl;
+import com.example.urbanmarket.exception.exceptions.user.UnconfirmedPasswordChangeException;
+import com.example.urbanmarket.exception.exceptions.user.UnverifiedAccountException;
 import com.example.urbanmarket.security.jwt.JwtService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,11 +36,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String login(LoginRequestDto loginRequestDto) throws Exception {
-        UserEntity user = userService.findByEmail(loginRequestDto.email());
+        String email = loginRequestDto.email();
+        UserEntity user = userService.findByEmail(email);
 
-//        if (!user.isEmailVerified()) {
-//            throw new UnverifiedAccountException(loginRequestDto.email());
-//        }
+        if (!user.isEmailVerified()) {
+            throw new UnverifiedAccountException(email);
+        } else if (!user.isPasswordVerified()) {
+            throw new UnconfirmedPasswordChangeException(email);
+        }
 
         Authentication authentication;
         try {
@@ -49,7 +57,6 @@ public class AuthServiceImpl implements AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return jwtService.generateToken(user.getId(), user.getEmail(), user.getFirstName()+" "+user.getLastName());
     }
-    /*
 
     @Override
     public UserResponseDto emailVerification(String emailVerificationCode) {
@@ -74,9 +81,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public UserResponseDto resetPassword(LoginRequestDto loginRequestDto) {
         UserEntity user = userService.findByEmail(loginRequestDto.email());
-        UserRequestDto userRequestDto = new UserRequestDto(user.getUsername(), user.getEmail(), loginRequestDto.getPassword(), user.getPhoneNumber());
+        UserRequestDto userRequestDto = new UserRequestDto(user.getFirstName(), user.getLastName(), user.getEmail(), user.getPhoneNumber(),  loginRequestDto.password());
         return userService.update(user.getId(), userRequestDto);
     }
-
-     */
 }
