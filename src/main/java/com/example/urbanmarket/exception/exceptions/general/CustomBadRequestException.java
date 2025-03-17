@@ -1,4 +1,4 @@
-package com.example.urbanmarket.exception.exceptions;
+package com.example.urbanmarket.exception.exceptions.general;
 
 public class CustomBadRequestException extends RuntimeException {
     public static final String BAD_REQUEST_EXCEPTION = "This request is not valid";

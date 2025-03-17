@@ -2,9 +2,8 @@ package com.example.urbanmarket.entity.order;
 
 import com.example.urbanmarket.dto.request.OrderRequestDto;
 import com.example.urbanmarket.dto.response.OrderResponseDto;
-import com.example.urbanmarket.exception.exceptions.CustomNotFoundException;
 import com.example.urbanmarket.exception.LogEnum;
-
+import com.example.urbanmarket.exception.exceptions.general.CustomNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

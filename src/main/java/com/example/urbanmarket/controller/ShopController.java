@@ -1,6 +1,8 @@
 package com.example.urbanmarket.controller;
 
 import com.example.urbanmarket.dto.request.ShopRequestDto;
+import com.example.urbanmarket.dto.response.ShopBannerResponseDto;
+import com.example.urbanmarket.dto.response.ShopCreateResponseDto;
 import com.example.urbanmarket.dto.response.ShopResponseDto;
 import com.example.urbanmarket.entity.shop.ShopService;
 import com.example.urbanmarket.entity.shop.contacts.ContactInfo;
@@ -26,6 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ShopController {
     private static final String URI_WITH_ID = "/{id}";
+    private static final String SHOP_URI_WITH_PRODUCTS_BY_ID = "/{id}/products";
     //private static final String SEC_REC = "BearerAuth";
     private static final String OBJECT_NAME = "Shop";
 
@@ -43,10 +46,10 @@ public class ShopController {
                     content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                         schema = @Schema(implementation = RuntimeException.class))})
     })
-    public ShopResponseDto create(@Valid @RequestBody ShopRequestDto request) {
+    public ShopCreateResponseDto create(@Valid @RequestBody ShopRequestDto request) {
         //accessValidator.isAdmin();
 
-        ShopResponseDto shop = service.create(request);
+        ShopCreateResponseDto shop = service.create(request);
 
         log.info("{}: {} (id: {}) has been added", LogEnum.SERVICE, OBJECT_NAME, shop.id());
         return shop;
@@ -73,18 +76,35 @@ public class ShopController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Shop received",
                     content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ShopBannerResponseDto.class)) }),
+            @ApiResponse(responseCode = "404", description = "Shop not found",
+                    content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = RuntimeException.class)) })
+
+    })
+    public ShopBannerResponseDto getById(@PathVariable String id) {
+        ShopBannerResponseDto shop = service.getById(id);
+        log.info("{}: {} (id: {}) has been retrieved", LogEnum.SERVICE, OBJECT_NAME, shop.id());
+        return shop;
+    }
+
+    @GetMapping(SHOP_URI_WITH_PRODUCTS_BY_ID)
+    //@SecurityRequirement(name = SEC_REC)
+    @Operation(summary = "Get shop with products by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Shop with products received",
+                    content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ShopResponseDto.class)) }),
             @ApiResponse(responseCode = "404", description = "Shop not found",
                     content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = RuntimeException.class)) })
 
     })
-    public ShopResponseDto getById(@PathVariable String id) {
-        ShopResponseDto shop = service.getById(id);
+    public ShopResponseDto getShopByIdWithProducts(@PathVariable String id) {
+        ShopResponseDto shop = service.getShopsByIdWithProducts(id);
         log.info("{}: {} (id: {}) has been retrieved", LogEnum.SERVICE, OBJECT_NAME, shop.id());
         return shop;
     }
-
     @PutMapping(URI_WITH_ID+"/contacts")
     //@SecurityRequirement(name = SEC_REC)
     @Operation(summary = "Update shop contact info")
@@ -94,12 +114,12 @@ public class ShopController {
                     content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = RuntimeException.class))})
     })
-    public ShopResponseDto updateContactInfo(@PathVariable String id, @Valid @RequestBody ContactInfo contacts) {
+    public ContactInfo updateContactInfo(@PathVariable String id, @Valid @RequestBody ContactInfo contacts) {
         //accessValidator.isAdmin();
 
-        ShopResponseDto shop = service.updateContactInfo(id, contacts);
+        ContactInfo updateContactInfo = service.updateContactInfo(id, contacts);
         log.info("{}: {} (id: {}) contacts have been updated", LogEnum.CONTROLLER, OBJECT_NAME, id);
-        return shop;
+        return updateContactInfo;
     }
 
     @PutMapping(URI_WITH_ID)

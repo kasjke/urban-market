@@ -3,6 +3,7 @@ package com.example.urbanmarket.entity.product;
 import com.example.urbanmarket.entity.product.sections.Category;
 import com.example.urbanmarket.entity.product.sections.SubCategory;
 import com.example.urbanmarket.entity.user.review.ReviewEntity;
+import com.example.urbanmarket.enums.Color;
 import com.example.urbanmarket.enums.ProductSize;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.validation.constraints.NotNull;
@@ -36,11 +37,17 @@ public class ProductEntity {
     @NotNull
     private String description;
 
+    @Size(min = 10, max = 200)
+    @NotNull
+    private String features;
+
     @NotNull
     private SubCategory subCategory;
 
     @NotNull
     private Category category;
+
+    private List<Color> color;
 
     @NotNull
     private int currentPrice;
@@ -51,11 +58,17 @@ public class ProductEntity {
     @NotNull
     private int amount;
 
+    private String brandCollection;
+
     private List<String> images;
 
     private int purchaseCount;
 
     private String shopId;
+
+    private String shopName;
+
+    private String deliverReturn;
  
     @CreatedDate
     private Instant createdAt;
@@ -95,7 +108,16 @@ public class ProductEntity {
         this.reviews = Objects.requireNonNullElseGet(reviews, ArrayList::new);
         updateRating();
     }
-    public ProductEntity(String name, String description, SubCategory subCategory, int currentPrice, int amount, List<String> images, String shopId, List<ReviewEntity> reviews) {
+    public void setCurrentPrice(int currentPrice) {
+        this.oldPrice = this.currentPrice;
+        this.currentPrice = currentPrice;
+    }
+
+    public ProductEntity(String name, String description, SubCategory subCategory, int currentPrice, int amount,String DeliverReturn, List<String> images, String shopId, List<ReviewEntity> reviews) {
+        if (currentPrice < 0) {
+            throw new IllegalArgumentException("Price cannot be negative");
+        }
+
         this.name = name;
         this.description = description;
         this.subCategory = subCategory;
@@ -106,6 +128,11 @@ public class ProductEntity {
         this.images = images;
         this.shopId = shopId;
         this.createdAt = Instant.now();
-        this.reviews = reviews;
+        this.reviews = Objects.requireNonNullElseGet(reviews, ArrayList::new);
+    }
+
+    public void updatePrice(int newPrice) {
+        this.oldPrice = this.currentPrice;
+        this.currentPrice = newPrice;
     }
 }

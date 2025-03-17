@@ -45,7 +45,7 @@ public class ReviewController {
         return ResponseEntity.ok(createdReview);
     }
 
-    @GetMapping("/specific/{productId}")
+    @GetMapping("/specific/{reviewId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get review by ID")
     @ApiResponses(value = {
@@ -56,9 +56,9 @@ public class ReviewController {
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = RuntimeException.class))})
     })
-    public ReviewResponseDto getById(@PathVariable String id) {
-        ReviewResponseDto review = reviewService.getById(id);
-        log.info("{}: {}s (id: {}) has been retrieved", LogEnum.CONTROLLER, OBJECT_NAME, id);
+    public ReviewResponseDto getById(@PathVariable String reviewId) {
+        ReviewResponseDto review = reviewService.getById(reviewId);
+        log.info("{}: {}s (id: {}) has been retrieved", LogEnum.CONTROLLER, OBJECT_NAME, reviewId);
         return review;
     }
 
